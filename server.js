@@ -35,7 +35,7 @@ app.use(cors());
 
 app.options('*', cors());
 
-app.use('/healthCheck', indexRouter);
+app.use('/home', indexRouter);
 app.use('/users', usersRouter);
 
 //Enable CORS from client side
