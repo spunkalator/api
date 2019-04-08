@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 app.options('*', cors());
-app.use('/home', indexRouter);
+app.use('/', indexRouter);
 
 //Enable CORS from client side
 app.use(function (req, res, next) {
