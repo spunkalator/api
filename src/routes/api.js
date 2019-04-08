@@ -6,5 +6,7 @@ const apiBase = '../api';
 
 module.exports = function (app) {
     // API routes
-    app.use('/users', require(`${apiBase}/users/index`));
+    app.use('/auth', require(`${apiBase}/auth/index`));
+    app.use('/users', authenticate, require(`${apiBase}/users/index`));
+
 };

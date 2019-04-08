@@ -12,18 +12,22 @@ let UsersSchema = new Schema({
     },
     email: { 
         type: String,
-        required: true
+       
     },
     gender: { 
         type: String,
-        required: true
+        
     },
+    location: String,
+    birthday: Date,
+    description: String,
     password: {
         type: String,
-        required: true
+        
     },
-    
-    
+    images: [{
+        path: String,
+    }],
     created: {type: Date, require:true, default: Date.now}
 
 });
