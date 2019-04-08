@@ -14,8 +14,6 @@ require('./src/models/db');
 
 
 const indexRouter = require('./src/routes');
-const usersRouter = require('./src/routes/users');
-
 const app = express();
 
 app.disable('x-powered-by');//turn off header
@@ -34,9 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 app.options('*', cors());
-
 app.use('/home', indexRouter);
-app.use('/users', usersRouter);
 
 //Enable CORS from client side
 app.use(function (req, res, next) {
