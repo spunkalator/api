@@ -16,7 +16,7 @@ mongoose.connect(dbUrl, {
     useNewUrlParser: true
 }).then((conn) =>{
 
-   // console.log('DB Connected');
+// console.log('DB Connected');
 
 }).catch(error => {
     console.log('DB Error', error);
@@ -38,7 +38,6 @@ process.once('SIGUSR2', function () {
         process.kill(process.pid, 'SIGUSR2');
     });
 });
-
 
 // For app termination
 process.on('SIGINT', function () {

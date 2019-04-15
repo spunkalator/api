@@ -18,33 +18,35 @@ exports.editProfile = (req, res) => {
     if (hasRequired.success) {
      
       userDetails = req.payload;
-      console.log(userDetails.nickname, "nickname");
-
-      Users.findOne({nickname: userDetails.nickname}, function (err, result) {
-
-            if (err) {
-                return sendErrorResponse(res, {err}, 'Something went wrong');
-            }
-           
-            if (result) {
+      
                 
-                let nUser       = new Users();
+                let nUser             = new Users();
                 nUser.nickname        = body.nickname;
-                nUser.description     = body.email;
+                nUser.description     = body.description;
                
-                nUser.save((err) => {
-                    console.log(err);
+                Users.updateOne({nickname: userDetails.nickname}, {
+                    $set: {
+                        nickname: body.nickname,
+                        description: body.description, 
+                    },
+                   
+                }, (err, updated) => {
+                    
+                    console.log(updated, "updated");
+
                     if (err) {
-                        return sendErrorResponse(res, {err}, 'Something went wrong');
+                        console.log(err);
+                        return sendErrorResponse(res, {}, 'Something went wrong, please try again');
                     }
-                    return sendSuccessResponse(res, {user: nUser}, 'Your profile has been updated');
+
+                    if (updated && updated.nModified) {
+                        return sendSuccessResponse(res, {user: nUser}, 'Profile has been updated');
+                    } else {
+                        return sendErrorResponse(res, {}, 'Nothing changed, you\'re all set!');
+                    }
                 });
 
-         }else{
-             console.log(err);
-             return sendErrorResponse(res, {}, 'We suddenly couldn\'t find your profile, Please contact support ');
-         }               
-        }); 
+       
        
 
     }else{
@@ -54,3 +56,23 @@ exports.editProfile = (req, res) => {
 }
 
 
+
+exports.profileDetails = (req, res) => {
+    if(req.params.nickname){
+        Users.findOne( {nickname: req.params.nickname}, (err, result) => 
+            {
+                console.log(req.params.nickname);
+                if(result){
+                    
+                    return sendSuccessResponse(res, {user: result}, 'Profile details');
+
+                }else{
+                    return sendErrorResponse(res, {}, 'User not found');
+                }
+            });
+    }else
+    {
+      return sendErrorResponse(res, {}, 'Nickname is required');
+    }
+
+}

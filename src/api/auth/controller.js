@@ -16,7 +16,7 @@ exports.auth = (req, res, next) => {
 
     req.body = trimCollection(req.body);
     const body = req.body;
-    //console.log(req.body);
+    console.log(req.body);
 
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
@@ -26,9 +26,10 @@ exports.auth = (req, res, next) => {
                 if (err)
                 {
                     console.log(err);
-                    return sendErroResponse(res, {}, 'Something went wrong, please try again');
+                    return sendErrorResponse(res, {}, 'Something went wrong, please try again');
                 }
                 if (result) {
+                    console.log(result,"res");
 
                     if(bcrypt.compareSync(body.password, result.password )) {
 
@@ -44,7 +45,7 @@ exports.auth = (req, res, next) => {
                         return sendErrorResponse(res, {}, 'Incorrect password, please try again');
                         }
                 }else{
-                    return sendErrorResponse(res, {result: result}, 'Sorry we can\'t find anyone with those details');
+                    return sendErrorResponse(res, {}, 'Sorry we can\'t find anyone with those details');
                 }
             });
     }else{
