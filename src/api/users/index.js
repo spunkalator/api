@@ -4,6 +4,6 @@ let router = require('express').Router();
 let controller = require('./controller');
 
 router.post('/editProfile', controller.editProfile)
-router.post('/profile/:nickname', controller.profileDetails)
+router.get('/profile/:nickname', controller.profileDetails)
 
 module.exports = router;
