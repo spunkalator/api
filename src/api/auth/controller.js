@@ -13,7 +13,7 @@ exports.auth = (req, res, next) => {
         {name: 'password', type: 'string'},
        
     ];
-
+    
     req.body = trimCollection(req.body);
     const body = req.body;
     console.log(req.body);
