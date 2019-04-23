@@ -85,12 +85,20 @@ exports.register = (req, res, next) => {
                     if (result && result.length > 0) {
                         return sendErrorResponse(res, {}, 'Someone else has registered with that nickname');
                     }else{
+                    
+                   
+
 
                     let nUser       = new Users();
                     let hash        = bcrypt.hashSync(body.password, 10);
                     nUser.nickname  = body.nickname;
                     nUser.email     = body.email;
                     nUser.password  = hash;
+
+                    const payload = { nickname: body.nickname, email: body.email };
+                    const options = { expiresIn: '2d'};
+                    const secret = process.env.JWT_SECRET;
+                    const token = jwt.sign(payload, secret, options);
                 
                     console.log(req.body);
                     nUser.save((err) => {
@@ -98,7 +106,7 @@ exports.register = (req, res, next) => {
                         if (err) {
                             return sendErrorResponse(res, {err}, 'Something went wrong');
                         }
-                        return sendSuccessResponse(res, {user: nUser}, 'User registered');
+                        return sendSuccessResponse(res, {token: token, user: nUser}, 'User registered');
                      });
                    }                
             });   

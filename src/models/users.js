@@ -3,7 +3,6 @@
 const mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-
 let UsersSchema = new Schema({
     
     nickname: { 
@@ -18,18 +17,21 @@ let UsersSchema = new Schema({
         type: String,
         
     },
-    location: String,
+    lastLocation: {
+        type: ['Point'],
+        coordinates: [ ],
+    },
     birthday: Date,
     description: String,
     password: {
-        type: String,
-        
+        type: String,   
     },
+   
     images: [{
         path: String,
     }],
     created: {type: Date, require:true, default: Date.now}
 
 });
-
+UsersSchema.index( { "lastLocation" : "2dsphere" } )
 module.exports = mongoose.model('User', UsersSchema);
