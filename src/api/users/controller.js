@@ -97,8 +97,7 @@ exports.nearbyUsers = (req, res) => {
 
 exports.updateLocation = (req, res) => {
     let required = [
-        {name: 'location', type: 'string'},
-       
+        {name: 'location', type: 'object'}, 
     ];
 
     req.body = trimCollection(req.body);
@@ -109,23 +108,18 @@ exports.updateLocation = (req, res) => {
 
         userDetails = req.payload;
 
-        Users.updateOne({nickname: userDetails.nickname}, {
+        Users.updateOne({email: userDetails.email}, {
             $set: {
-                lastlocation: body.location,
-              
+                lastLocation: body.location,
             },
-           
         }, (err, updated) => {
-            
             console.log(updated, "updated");
-
             if (err) {
                 console.log(err);
                 return sendErrorResponse(res, {}, 'Something went wrong, please try again');
             }
-
             if (updated && updated.nModified) {
-                return sendSuccessResponse(res, {user: nUser}, 'Location has been updated');
+                return sendSuccessResponse(res, { }, 'Location has been updated');
             } else {
                 return sendErrorResponse(res, {}, 'Nothing changed, you\'re all set!');
             }
@@ -134,7 +128,7 @@ exports.updateLocation = (req, res) => {
      
     }else
     {
-      return sendErrorResponse(res, {}, 'Current location is required');
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
     }
 
 }
