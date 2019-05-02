@@ -186,3 +186,26 @@ exports.updateUserStatus = (req, res) => {
     }
 
 }
+
+
+function appfilter(params) {
+    let {age, gender, active} = {...params};
+
+    let match = {},
+       
+    if (gender) {
+        match['gender'] = gender;
+    }
+    if (age) {
+        match['age'] = age;
+    }
+    if (active) {
+        
+        const aStatus = new Date(dateCreated);
+        match['created'] = {'$eq': dC};
+
+        match['active'] = active;
+    }
+    
+    return {match};
+}
