@@ -3,6 +3,15 @@
 const mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
+    let onlineStatusSchema = new Schema({
+        lastUpdated: {
+            type: Date,
+            default: Date.now
+        },
+        status: Boolean,
+    });
+    
+
 let UsersSchema = new Schema({
     
     nickname: { 
@@ -25,6 +34,13 @@ let UsersSchema = new Schema({
     description: String,
     password: {
         type: String,   
+    },
+
+    onlineStatus: onlineStatusSchema,
+    delivered: {
+        type: Boolean,
+        required: true,
+        default: false
     },
    
     images: [{

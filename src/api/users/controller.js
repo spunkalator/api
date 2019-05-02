@@ -142,3 +142,70 @@ exports.updateLocation = (req, res) => {
     }
 
 }
+
+exports.updateUserStatus = (req, res) => {
+    let required = [
+        {name: 'status', type: 'string'}, 
+    ];
+
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        userDetails = req.payload;
+        lstatus = body.status.toLowerCase();
+
+        if(lstatus !== "true" && lstatus!== "false")
+        {
+            return sendErrorResponse(res, {}, 'Status must either be true or false');
+        }
+        stat = {
+            status: lstatus !== 'false',
+        };
+        Users.updateOne({email: userDetails.email}, {
+            $set: {
+                onlineStatus: stat,
+            },
+        }, (err, updated) => {
+            console.log(updated, "updated");
+            if (err) {
+                console.log(err);
+                return sendErrorResponse(res, {err}, 'Something went wrong, please try again');
+            }
+            if (updated && updated.nModified) {
+                return sendSuccessResponse(res, { }, 'Status has been updated');
+            } else {
+                return sendErrorResponse(res, {}, 'Nothing changed, you\'re all set!');
+            }
+        });
+    }else
+    {
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+
+}
+
+
+function appfilter(params) {
+    let {age, gender, active} = {...params};
+
+    let match = {},
+       
+    if (gender) {
+        match['gender'] = gender;
+    }
+    if (age) {
+        match['age'] = age;
+    }
+    if (active) {
+        
+        const aStatus = new Date(dateCreated);
+        match['created'] = {'$eq': dC};
+
+        match['active'] = active;
+    }
+    
+    return {match};
+}
