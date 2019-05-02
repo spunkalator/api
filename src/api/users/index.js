@@ -7,5 +7,6 @@ router.post('/editProfile', controller.editProfile)
 router.get('/profile/:nickname', controller.profileDetails)
 router.post('/nearby', controller.nearbyUsers)
 router.post('/updateLocation', controller.updateLocation)
+router.post('/updateUserStatus', controller.updateUserStatus)
 
 module.exports = router;
