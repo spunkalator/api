@@ -32,3 +32,30 @@ exports.popular = (req, res)  => {
     
     
 }
+
+
+exports.likeUser = (req, res) => {
+    
+    console.log(req.params.username);
+    if (req.params.username) {
+
+        Users.updateOne(
+            { nickname: req.params.username }, {
+            $inc: {
+                likes:1,
+            },
+        }, (err, updated) => {
+            console.log(updated, "updated");
+            if (err) {
+                console.log(err);
+                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+            }
+            if (updated && updated.nModified) {
+                return sendSuccessResponse(res, { }, 'Liked!');
+            }
+        });
+
+    }else{
+        return sendErrorResponse(res, {}, 'Username of the person you\'re liking is required');
+    }
+}

@@ -35,17 +35,16 @@ let UsersSchema = new Schema({
     password: {
         type: String,   
     },
-
     onlineStatus: onlineStatusSchema,
     delivered: {
         type: Boolean,
         required: true,
         default: false
     },
-   
     images: [{
         path: String,
     }],
+    likes: Number,
     created: {type: Date, require:true, default: Date.now}
 
 });
