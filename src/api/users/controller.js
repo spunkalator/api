@@ -23,12 +23,21 @@ exports.editProfile = (req, res) => {
                 let nUser             = new Users();
                 nUser.nickname        = body.nickname;
                 nUser.description     = body.description;
-               
-                Users.updateOne({nickname: userDetails.nickname}, {
+
+                imagefile = {
+                    path: body.image
+                };
+
+                Users.updateOne({email: userDetails.email}, {
                     $set: {
                         nickname: body.nickname,
                         description: body.description, 
+                       
                     },
+                    $push: { 
+                        images: imagefile
+                    }
+
                    
                 }, (err, updated) => {
                     
@@ -40,7 +49,7 @@ exports.editProfile = (req, res) => {
                     }
 
                     if (updated && updated.nModified) {
-                        return sendSuccessResponse(res, {user: nUser}, 'Profile has been updated');
+                        return sendSuccessResponse(res, {}, 'Profile has been updated');
                     } else {
                         return sendErrorResponse(res, {}, 'Nothing changed, you\'re all set!');
                     }

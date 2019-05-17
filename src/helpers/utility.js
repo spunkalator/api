@@ -5,7 +5,7 @@ exports.sendJsonResponse = function (res, status, content) {
     res.status(status).json(content);
 };
 exports.sendErrorResponse = function (res, content, message, status) {
-    status = !status ? 400 : status
+    status = !status ? 422 : status
     let data = {
         success: false,
         message: message,
