@@ -41,6 +41,7 @@ let UsersSchema = new Schema({
         required: true,
         default: false
     },
+    defaultImage : String,
     images: [{
         path: String,
     }],

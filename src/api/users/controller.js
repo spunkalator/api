@@ -92,21 +92,33 @@ exports.nearbyUsers = (req, res) => {
     const body = req.body;
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
-        Users.find( 
+
+        Users.aggregate([ 
+            {$sample: {size: 10} },
+        ], (err, popular) => {
+            console.log(err);
+            if (err) 
             {
-                'lastLocation' :
-                {
-                  $near: {
-                    $geometry: {
-                         type: "Point" ,
-                         coordinates: [ body.lastLocation]
-                    },
-                    $maxDistance: 100
-                }
+                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
             }
-            },function(err,result){
-                return sendSuccessResponse(res, { users: result}, 'Users near you');
-            })
+            return sendSuccessResponse(res, {popular}, 'Nearby users');   
+        }); 
+
+        // Users.find( 
+        //     {
+        //         'lastLocation' :
+        //         {
+        //           $near: {
+        //             $geometry: {
+        //                  type: "Point" ,
+        //                  coordinates: [ body.lastLocation]
+        //             },
+        //             $maxDistance: 100
+        //         }
+        //     }
+        //     },function(err,result){
+        //         return sendSuccessResponse(res, { users: result}, 'Users near you');
+        //     })
      
     }else
     {
