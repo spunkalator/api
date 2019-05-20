@@ -9,6 +9,7 @@ exports.editProfile = (req, res) => {
         {name: 'nickname', type: 'string'},
         {name: 'description', type: 'string'},
         
+        
     ];
 
     req.body = trimCollection(req.body);
@@ -31,7 +32,8 @@ exports.editProfile = (req, res) => {
                 Users.updateOne({email: userDetails.email}, {
                     $set: {
                         nickname: body.nickname,
-                        description: body.description, 
+                        description: body.description,
+                        defaultImage: body.defaultImage, 
                        
                     },
                     $push: { 
