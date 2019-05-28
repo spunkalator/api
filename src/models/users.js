@@ -18,14 +18,18 @@ let UsersSchema = new Schema({
         type: String,
         required: true
     },
+
+    city: String,
+
     email: { 
         type: String,
        
     },
+    
     gender: { 
         type: String,
-        
     },
+    birthday: Date,
     lastLocation: {
         type: ['Point'],
         coordinates: [ ],

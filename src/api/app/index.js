@@ -5,9 +5,9 @@ let controller = require('./controller');
 
 
 
-router.get('/quickmatch', controller.quickmatch);
+router.get('/quickmatch/:n', controller.quickmatch);
 router.get('/popular', controller.popular);
-
+router.get('/nearby', controller.nearbyUsers)
 router.post('/like/:username', controller.likeUser);
 
 module.exports = router;
