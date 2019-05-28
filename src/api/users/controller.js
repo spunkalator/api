@@ -86,47 +86,7 @@ exports.profileDetails = (req, res) => {
 
 }
 
-exports.nearbyUsers = (req, res) => {
-    let required = [
-        {name: 'location', type: 'object'},
-    ];
-    req.body = trimCollection(req.body);
-    const body = req.body;
-    let hasRequired = validParam(req.body, required);
-    if (hasRequired.success) {
 
-        Users.aggregate([ 
-            {$sample: {size: 10} },
-        ], (err, popular) => {
-            console.log(err);
-            if (err) 
-            {
-                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
-            }
-            return sendSuccessResponse(res, {popular}, 'Nearby users');   
-        }); 
-
-        // Users.find( 
-        //     {
-        //         'lastLocation' :
-        //         {
-        //           $near: {
-        //             $geometry: {
-        //                  type: "Point" ,
-        //                  coordinates: [ body.lastLocation]
-        //             },
-        //             $maxDistance: 100
-        //         }
-        //     }
-        //     },function(err,result){
-        //         return sendSuccessResponse(res, { users: result}, 'Users near you');
-        //     })
-     
-    }else
-    {
-        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
-    }
-}
 
 exports.updateLocation = (req, res) => {
     let required = [
