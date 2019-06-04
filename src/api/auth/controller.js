@@ -53,6 +53,45 @@ exports.auth = (req, res, next) => {
     }
 };
 
+exports.authWithToken = (req, res, next) => {
+
+    let required = [
+        {name: 'identity', type: 'string'},
+        {name: 'token', type: 'string'},
+       
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    console.log(req.body);
+
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        Users.findOne({$or:[ {nickname: body.identity},{token: body.token}]}, (err, result) => 
+            {
+                if (err)
+                {
+                    console.log(err);
+                    return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                }
+                if (result) {
+                    
+                        const payload = { nickname: result.nickname, email: result.email };
+                        const options = { expiresIn: '2d'};
+                        const secret = process.env.JWT_SECRET;
+                        const token = jwt.sign(payload, secret, options);
+
+                        return sendSuccessResponse(res, {token: token, user: result}, 'Login successful');
+                }else{
+                    return sendErrorResponse(res, {}, 'Sorry we can\'t find anyone with those details');
+                }
+            });
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+};
+
 exports.register = (req, res, next) => {
     let required = [
         {name: 'nickname', type: 'string'},
@@ -116,4 +155,70 @@ exports.register = (req, res, next) => {
         return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
     } 
 }
+
+exports.registerWithToken = (req, res, next) => {
+    let required = [
+        {name: 'nickname', type: 'string'},
+        {name: 'gender', type: 'string'},
+        {name: 'email', type: 'string'},
+        {name: 'token', type: 'string'},
+       
+    ];
+
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    console.log(req.body);
+
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        Users.find({email: req.body.email}, function (err, result) {
+            if (err) {
+                return sendErrorResponse(res, {err}, 'Something went wrong');
+            }
+            if (result && result.length > 0) {
+                return sendErrorResponse(res, {result : result.password}, 'Someone else has registered with that email');
+            }else{
+
+              Users.find({nickname: req.body.nickname}, function (err, result) {
+
+                    if (err) {
+                        return sendErrorResponse(res, {err}, 'Something went wrong');
+                    }
+                    if (result && result.length > 0) {
+                        return sendErrorResponse(res, {}, 'Someone else has registered with that nickname');
+                    }else{
+                    
+                   
+
+
+                    let nUser       = new Users();
+                    let hash        = bcrypt.hashSync(body.password, 10);
+                    nUser.nickname  = body.nickname;
+                    nUser.email     = body.email;
+                    //nUser.password  = hash;
+                    nUser.token     = body.token;
+
+                    const payload = { nickname: body.nickname, email: body.email };
+                    const options = { expiresIn: '2d'};
+                    const secret = process.env.JWT_SECRET;
+                    const token = jwt.sign(payload, secret, options);
+                
+                    console.log(req.body);
+                    nUser.save((err) => {
+                        console.log(err);
+                        if (err) {
+                            return sendErrorResponse(res, {err}, 'Something went wrong');
+                        }
+                        return sendSuccessResponse(res, {token: token, user: nUser}, 'User registered');
+                     });
+                   }                
+            });   
+           }
+        });
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    } 
+}
+
 
