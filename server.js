@@ -16,8 +16,12 @@ require('./src/models/db');
 const indexRouter = require('./src/routes');
 const app = express();
 
-app.disable('x-powered-by');//turn off header
+http = require('http');
+server = http.createServer(app);
 
+
+
+app.disable('x-powered-by');//turn off header
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -33,6 +37,36 @@ app.use(cors());
 
 app.options('*', cors());
 app.use('/', indexRouter);
+
+io = require('socket.io').listen(server);
+io.on('connection', (socket) => {
+
+    console.log('user connected')
+    socket.on('join', function(userNickname = "awele") {
+
+        console.log(userNickname +" : has joined the chat "  );
+        socket.broadcast.emit('userjoinedthechat',userNickname +" : has joined the chat ");
+    })
+    
+    socket.on('messagedetection', (senderNickname="spunkalator", messageContent) => {
+    
+        //log the message in console 
+        console.log(senderNickname+" : " +messageContent)
+        //create a message object 
+        let  message = {"message":messageContent, "senderNickname":senderNickname}
+        // send the message to all users including the sender  using io.emit() 
+        io.emit('message', message )
+    })
+    
+    socket.on('disconnect', function() {
+    
+            console.log(userNickname +' has left ')
+            socket.broadcast.emit( "userdisconnect" ,' user has left');
+
+    });
+});
+
+
 
 //Enable CORS from client side
 app.use(function (req, res, next) {
