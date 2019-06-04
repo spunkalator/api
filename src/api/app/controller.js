@@ -112,3 +112,48 @@ exports.likeUser = (req, res) => {
         return sendErrorResponse(res, {}, 'Username of the person you\'re liking is required');
     }
 }
+
+
+function tripFilter (query) {
+
+    let {
+        limit, 
+    } = {...query};
+
+    let requestMatch = {},
+        tripMatch = {},
+        fleetMatch = {},
+        assetMatch = {},
+        sortOptions = {sortBy: 'startDate', sortOrder: -1},
+        routeMatch = {};
+
+    //todo: filter parnter and customer trip using tripMatch
+
+    if (startDate) {
+        //TOdo: Can be optimized
+        const sD = new Date(startDate);
+        const sDateAfter = new Date(new Date().setDate(sD.getDate() + 1));
+        if (deliveryDate) {
+            const eD = new Date(deliveryDate);
+            const eDateAfter = new Date(new Date().setDate(eD.getDate() + 1));
+            tripMatch['$and'] = [{'startDate': {'$gt': sD, '$lt': sDateAfter}}, {'deliveryDate': {'$gt': eD, '$lt': eDateAfter}}];
+        } else {
+            console.log(new Date(sDateAfter));
+            tripMatch['startDate'] = {'$gt': sD, '$lt': sDateAfter};
+        }
+
+    } else if (deliveryDate) {
+        const eD = new Date(deliveryDate);
+        const eDateAfter = new Date(new Date().setDate(eD.getDate() + 1));
+        tripMatch['deliveryDate'] = {'$gt': eD, '$lt': eDateAfter};
+    }
+    if (route) {
+        tripMatch['route'] = new ObjectId(route);
+    }
+    if (assetClass) {
+        tripMatch['assetClass'] = new ObjectId(assetClass);
+    }
+
+   
+    return {};
+}

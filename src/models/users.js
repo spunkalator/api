@@ -25,6 +25,10 @@ let UsersSchema = new Schema({
         type: String,
        
     },
+    token: {
+        type: String,
+
+    },
     
     gender: { 
         type: String,
