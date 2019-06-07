@@ -8,6 +8,8 @@ router.post('/authWithToken', controller.authWithToken);
 router.post('/register', controller.register);
 router.post('/registerWithToken', controller.registerWithToken);
 
+router.post('/changePassword', controller.changePassword);
+router.post('/forgotPassword', controller.forgotPassword);
 
 
 module.exports = router;

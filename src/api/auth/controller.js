@@ -221,4 +221,115 @@ exports.registerWithToken = (req, res, next) => {
     } 
 }
 
+exports.changePassword = (req,res) =>
+{
+    let required = [
+        {name: 'currentPassword', type: 'string'},
+        {name: 'newPassword', type: 'string'},
+       
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    console.log(req.body);
 
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        userDetails = req.payload;
+        console.log(userDetails, "dets");
+
+        Users.findOne({email: userDetails.email}, (err, result) => 
+        {
+            if (err)
+            {
+                console.log(err);
+                return sendErrorResponse(res, {err}, 'Something went wrong, please try again');
+            }
+            if (result) {
+                
+                if(bcrypt.compareSync(body.currentPassword, result.password )) {
+
+                    let hash              = bcrypt.hashSync(body.newPassword, 10);
+
+                    Users.updateOne({email: userDetails.email}, {
+                        $set: {
+                            password: hash,
+
+                        }
+                    }, (err, updated) => {
+                        
+                        console.log(updated, "updated");
+    
+                        if (err) {
+                            console.log(err);
+                            return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                        }
+    
+                        if (updated && updated.nModified) {
+                            return sendSuccessResponse(res, {}, 'Password change successful');
+                        } else {
+                            return sendErrorResponse(res, {}, 'Nothing changed, you\'re all set!');
+                        }
+                    });
+    
+ 
+                } else {
+                    return sendErrorResponse(res, {}, 'Old Password is incorrect, please try again');
+                    }
+            }else{
+                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+            }
+        });
+
+
+
+
+
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+
+}
+
+exports.forgotPassword = (req, res) =>
+{
+    let required = [
+        {name: 'email', type: 'string'},
+      
+       
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    console.log(req.body);
+
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        Users.findOne({email: body.email}, (err, result) => 
+        {
+            if (err)
+            {
+                console.log(err);
+                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+            }
+            if (result) {
+                if(result.email == body.email ){
+                    return sendSuccessResponse(res, {}, 'Please check your email, a reset link has been sent');
+
+                }
+                
+               
+            }else{
+                return sendErrorResponse(res, {}, 'We can\'t seem to find that email, please check again ');
+            }
+        });
+
+
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+
+
+}
