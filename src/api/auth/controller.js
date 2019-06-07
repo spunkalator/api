@@ -193,7 +193,7 @@ exports.registerWithToken = (req, res, next) => {
 
 
                     let nUser       = new Users();
-                    let hash        = bcrypt.hashSync(body.password, 10);
+                    //let hash        = bcrypt.hashSync(body.password, 10);
                     nUser.nickname  = body.nickname;
                     nUser.email     = body.email;
                     //nUser.password  = hash;
