@@ -6,6 +6,7 @@ let controller = require('./controller');
 router.post('/editProfile', controller.editProfile)
 router.get('/profile/:nickname', controller.profileDetails)
 router.post('/updateLocation', controller.updateLocation)
+router.post('/changePassword', controller.changePassword);
 router.post('/updateUserStatus', controller.updateUserStatus)
 
 module.exports = router;
