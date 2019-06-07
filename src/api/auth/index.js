@@ -9,5 +9,7 @@ router.post('/register', controller.register);
 router.post('/registerWithToken', controller.registerWithToken);
 
 
+router.post('/forgotPassword', controller.forgotPassword);
+
 
 module.exports = router;

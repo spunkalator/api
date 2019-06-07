@@ -241,48 +241,6 @@ exports.changePassword = (req,res) =>
 
 }
 
-exports.forgotPassword = (req, res) =>
-{
-    let required = [
-        {name: 'email', type: 'string'},
-      
-       
-    ];
-    
-    req.body = trimCollection(req.body);
-    const body = req.body;
-    console.log(req.body);
-
-    let hasRequired = validParam(req.body, required);
-    if (hasRequired.success) {
-
-        Users.findOne({email: body.email}, (err, result) => 
-        {
-            if (err)
-            {
-                console.log(err);
-                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
-            }
-            if (result) {
-                if(result.email == body.email ){
-                    return sendSuccessResponse(res, {}, 'Please check your email, a reset link has been sent');
-
-                }
-                
-               
-            }else{
-                return sendErrorResponse(res, {}, 'We can\'t seem to find that email, please check again ');
-            }
-        });
-
-
-    }else{
-        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
-    }
-
-
-}
-
 function appfilter(params) {
     let {age, gender, active} = {...params};
 
