@@ -68,7 +68,7 @@ exports.authWithToken = (req, res, next) => {
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        Users.findOne( {email: body.identity}, (err, result) => 
+        Users.findOne( {email: body.email}, (err, result) => 
             {
                 if (err)
                 {
@@ -86,7 +86,7 @@ exports.authWithToken = (req, res, next) => {
                 }else{
                     
                     let nUser       = new Users();
-                    nUser.email     = body.identity;
+                    nUser.email     = body.email;
                     nUser.token     = body.token;
 
                     const payload = { email: body.email };
