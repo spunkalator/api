@@ -86,7 +86,7 @@ exports.authWithToken = (req, res, next) => {
                 }else{
                     
                     let nUser       = new Users();
-                    nUser.email     = body.email;
+                    nUser.email     = body.identity;
                     nUser.token     = body.token;
 
                     const payload = { email: body.email };
@@ -98,7 +98,8 @@ exports.authWithToken = (req, res, next) => {
                     nUser.save((err) => {
                         console.log(err);
                         if (err) {
-                            return sendErrorResponse(res, {err}, 'Something went wrong');
+                            console.log(err);
+                            return sendErrorResponse(res, {}, 'Something went wrong');
                         }
                         return sendSuccessResponse(res, {token: token, user: nUser}, 'User registered');
                      });
