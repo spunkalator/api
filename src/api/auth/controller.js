@@ -84,7 +84,25 @@ exports.authWithToken = (req, res, next) => {
 
                         return sendSuccessResponse(res, {token: token, user: result}, 'Login successful');
                 }else{
-                    return sendErrorResponse(res, {}, 'Sorry we can\'t find anyone with those details');
+                    
+                    let nUser       = new Users();
+                    nUser.email     = body.email;
+                    nUser.token     = body.token;
+
+                    const payload = { email: body.email };
+                    const options = { expiresIn: '2d'};
+                    const secret = process.env.JWT_SECRET;
+                    const token = jwt.sign(payload, secret, options);
+                
+                    console.log(req.body);
+                    nUser.save((err) => {
+                        console.log(err);
+                        if (err) {
+                            return sendErrorResponse(res, {err}, 'Something went wrong');
+                        }
+                        return sendSuccessResponse(res, {token: token, user: nUser}, 'User registered');
+                     });
+
                 }
             });
     }else{
