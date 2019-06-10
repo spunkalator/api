@@ -16,7 +16,7 @@ let UsersSchema = new Schema({
     
     nickname: { 
         type: String,
-        required: true
+       
     },
 
     city: String,
