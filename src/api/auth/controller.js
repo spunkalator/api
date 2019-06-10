@@ -56,7 +56,7 @@ exports.auth = (req, res, next) => {
 exports.authWithToken = (req, res, next) => {
 
     let required = [
-        {name: 'identity', type: 'string'},
+        {name: 'email', type: 'string'},
         {name: 'token', type: 'string'},
        
     ];
@@ -68,7 +68,7 @@ exports.authWithToken = (req, res, next) => {
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        Users.findOne({$or:[ {nickname: body.identity},{token: body.token}]}, (err, result) => 
+        Users.findOne( {email: body.identity}, (err, result) => 
             {
                 if (err)
                 {
