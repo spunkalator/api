@@ -56,8 +56,11 @@ exports.auth = (req, res, next) => {
 exports.authWithToken = (req, res, next) => {
 
     let required = [
+        {name: 'nickname', type: 'string'},
+        {name: 'gender', type: 'string'},
         {name: 'email', type: 'string'},
         {name: 'token', type: 'string'},
+       
        
     ];
     
@@ -86,7 +89,9 @@ exports.authWithToken = (req, res, next) => {
                 }else{
                     
                     let nUser       = new Users();
+                    nUser.nickname  = body.nickname;
                     nUser.email     = body.email;
+                    nUser.gender     = body.gender;
                     nUser.token     = body.token;
 
                     const payload = { email: body.email };
