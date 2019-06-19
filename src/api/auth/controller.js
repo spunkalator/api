@@ -35,7 +35,7 @@ exports.auth = (req, res, next) => {
 
 
                         const payload = { nickname: result.nickname, email: result.email };
-                        const options = { expiresIn: '2d'};
+                        const options = { expiresIn: '1h'};
                         const secret = process.env.JWT_SECRET;
                         const token = jwt.sign(payload, secret, options);
 
@@ -81,7 +81,7 @@ exports.authWithToken = (req, res, next) => {
                 if (result) {
                     
                         const payload = { nickname: result.nickname, email: result.email };
-                        const options = { expiresIn: '2d'};
+                        const options = { expiresIn: '1h'};
                         const secret = process.env.JWT_SECRET;
                         const token = jwt.sign(payload, secret, options);
 
@@ -95,7 +95,7 @@ exports.authWithToken = (req, res, next) => {
                     nUser.token     = body.token;
 
                     const payload = { email: body.email };
-                    const options = { expiresIn: '2d'};
+                    const options = { expiresIn: '1h'};
                     const secret = process.env.JWT_SECRET;
                     const token = jwt.sign(payload, secret, options);
                 
@@ -159,7 +159,7 @@ exports.register = (req, res, next) => {
                     nUser.password  = hash;
 
                     const payload = { nickname: body.nickname, email: body.email };
-                    const options = { expiresIn: '2d'};
+                    const options = { expiresIn: '1h'};
                     const secret = process.env.JWT_SECRET;
                     const token = jwt.sign(payload, secret, options);
                 
@@ -224,7 +224,7 @@ exports.registerWithToken = (req, res, next) => {
                     nUser.token     = body.token;
 
                     const payload = { nickname: body.nickname, email: body.email };
-                    const options = { expiresIn: '2d'};
+                    const options = { expiresIn: '1h'};
                     const secret = process.env.JWT_SECRET;
                     const token = jwt.sign(payload, secret, options);
                 
