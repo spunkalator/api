@@ -177,3 +177,23 @@ exports.trimCollection = (data) => {
     }
     return data;
 };
+
+exports.generateId = () => {
+
+    const length = 6;
+    let timestamp = Date.now().toString();
+
+    let _getRandomInt = function( min, max ) {
+        return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+    };
+
+    let parts = timestamp.split( "" ).reverse();
+    let id = "";
+
+    for( let i = 0; i < length; ++i ) {
+        const index = _getRandomInt( 0, parts.length - 1 );
+        id += parts[index];
+    }
+
+    return id;
+};
