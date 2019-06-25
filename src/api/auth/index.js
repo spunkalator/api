@@ -12,4 +12,8 @@ router.post('/registerWithToken', controller.registerWithToken);
 router.post('/forgotPassword', controller.forgotPassword);
 
 
+router.post('/sendOtp', controller.sendOtp);
+router.post('/verifyOtp', controller.verifyOtp);
+
+
 module.exports = router;
