@@ -15,7 +15,7 @@ exports.logChatHistory = (req, res) => {
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        ChatHistory.findOne( {from: body.from}, (err, result) => 
+        ChatHistory.findOne( {from: body.from, to: body.to}, (err, result) => 
         {
             if (err)
             {
