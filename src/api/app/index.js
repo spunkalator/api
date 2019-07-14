@@ -10,4 +10,6 @@ router.get('/popular', controller.popular);
 router.post('/nearby', controller.nearbyUsers)
 router.post('/like/:username', controller.likeUser);
 
+router.post('/logChatHistory', controller.logChatHistory);
+
 module.exports = router;

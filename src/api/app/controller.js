@@ -2,8 +2,51 @@
 const {validParam, sendErrorResponse, sendSuccessResponse, trimCollection} = require('../../helpers/utility');
 const mongoose = require('mongoose');
 const Users = mongoose.model('User');
+const ChatHistory = mongoose.model('ChatHistory');
 
 
+exports.logChatHistory = (req, res) => {
+    let required = [
+        {name: 'from', type: 'string'},
+        {name: 'to', type: 'string'},
+    ];
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        ChatHistory.findOne( {from: body.from}, (err, result) => 
+        {
+            if (err)
+            {
+                console.log(err);
+                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+            }
+            if (result) {
+                    return sendSuccessResponse(res, {}, 'History already logged');
+            }else{
+                
+                let nHistory      = new ChatHistory();
+                nHistory.from  = body.from;
+                nHistory.to     = body.to;
+               
+                nHistory.save((err) => {
+                    console.log(err);
+                    if (err) {
+                        console.log(err);
+                        return sendErrorResponse(res, {}, 'Something went wrong');
+                    }
+                    return sendSuccessResponse(res, {}, 'History logged');
+                 });
+            }
+        });
+    }else
+    {
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+
+
+}
 
 exports.quickmatch = (req, res)  => {
    
