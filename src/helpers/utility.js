@@ -180,7 +180,7 @@ exports.trimCollection = (data) => {
 
 exports.generateId = () => {
 
-    const length = 6;
+    const length = 15;
     let timestamp = Date.now().toString();
 
     let _getRandomInt = function( min, max ) {

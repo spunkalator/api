@@ -14,9 +14,14 @@ const mongoose = require('mongoose'),
 
 let UsersSchema = new Schema({
     
+    
+
     nickname: { 
         type: String,
        
+    },
+    memberId: { 
+        type: String,  
     },
 
     city: String,

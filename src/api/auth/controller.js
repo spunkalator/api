@@ -205,6 +205,7 @@ exports.authWithToken = (req, res, next) => {
                     nUser.email     = body.email;
                     nUser.gender     = body.gender;
                     nUser.token     = body.token;
+                    nUser.memberId  = generateId();
 
                     const payload = { email: body.email };
                     const options = { expiresIn: '1h'};
@@ -269,6 +270,7 @@ exports.register = (req, res, next) => {
                     nUser.nickname  = body.nickname;
                     nUser.email     = body.email;
                     nUser.password  = hash;
+                    nUser.memberId  = generateId();
 
                     const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};
@@ -334,6 +336,7 @@ exports.registerWithToken = (req, res, next) => {
                     nUser.email     = body.email;
                     //nUser.password  = hash;
                     nUser.token     = body.token;
+                    nUser.memberId  = generateId();
 
                     const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};
