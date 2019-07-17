@@ -50,7 +50,7 @@ exports.logChatHistory = (req, res) => {
 
 exports.getChatHistory = (req, res) =>{
     let required = [
-        {name: 'id', type: 'string'},
+        {name: 'memberId', type: 'string'},
        
     ];
     req.body = trimCollection(req.body);
@@ -60,11 +60,14 @@ exports.getChatHistory = (req, res) =>{
 
         
           ChatHistory.aggregate([
-            {$match: {from: body.id} },
+            {$match: {from: body.memberId} },
             {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'details'
             }},
         ], (err, users) => {
-              if (err) {  return sendErrorResponse(res, {err}, 'Something went wrong');}
+              if (err) {  
+                console.log(err);  
+                return sendErrorResponse(res, {}, 'Something went wrong');
+            }
               return sendSuccessResponse(res, users, 'Your chat history');
         });
     }else
