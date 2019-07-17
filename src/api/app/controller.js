@@ -61,7 +61,7 @@ exports.getChatHistory = (req, res) =>{
         
           ChatHistory.aggregate([
             {$match: {from: body.id} },
-            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'from', as: 'details'
+            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'details'
             }},
         ], (err, users) => {
               if (err) {  return sendErrorResponse(res, {err}, 'Something went wrong');}
