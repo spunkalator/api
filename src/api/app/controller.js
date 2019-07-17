@@ -49,18 +49,12 @@ exports.logChatHistory = (req, res) => {
 
 
 exports.getChatHistory = (req, res) =>{
-    let required = [
-        {name: 'memberId', type: 'string'},
-       
-    ];
-    req.body = trimCollection(req.body);
-    const body = req.body;
-    let hasRequired = validParam(req.body, required);
-    if (hasRequired.success) {
+    if(req.params.memberId){
+
 
         
           ChatHistory.aggregate([
-            {$match: {from: body.memberId} },
+            {$match: {from: req.params.memberId} },
             {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'details'
             }},
         ], (err, users) => {
@@ -72,7 +66,7 @@ exports.getChatHistory = (req, res) =>{
         });
     }else
     {
-        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+      return sendErrorResponse(res, {}, 'MemberId is required');
     }
 }
 

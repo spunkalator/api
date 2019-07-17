@@ -11,6 +11,6 @@ router.post('/nearby', controller.nearbyUsers)
 router.post('/like/:username', controller.likeUser);
 
 router.post('/logChatHistory', controller.logChatHistory);
-router.get('/getChatHistory', controller.getChatHistory);
+router.get('/getChatHistory/:memberId', controller.getChatHistory);
 
 module.exports = router;
