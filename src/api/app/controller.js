@@ -3,6 +3,7 @@ const {validParam, sendErrorResponse, sendSuccessResponse, trimCollection} = req
 const mongoose = require('mongoose');
 const Users = mongoose.model('User');
 const ChatHistory = mongoose.model('ChatHistory');
+const ObjectId = require('mongodb').ObjectId;
 
 
 exports.logChatHistory = (req, res) => {
@@ -44,9 +45,34 @@ exports.logChatHistory = (req, res) => {
     {
         return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
     }
-
-
 }
+
+
+exports.getChatHistory = (req, res) =>{
+    let required = [
+        {name: 'id', type: 'string'},
+       
+    ];
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        
+          ChatHistory.aggregate([
+            {$match: {from: body.id} },
+            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'from', as: 'details'
+            }},
+        ], (err, users) => {
+              if (err) {  return sendErrorResponse(res, {err}, 'Something went wrong');}
+              return sendSuccessResponse(res, users, 'Your chat history');
+        });
+    }else
+    {
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+}
+
 
 exports.quickmatch = (req, res)  => {
    
