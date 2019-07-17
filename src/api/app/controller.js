@@ -50,7 +50,7 @@ exports.logChatHistory = (req, res) => {
 
 exports.getChatHistory = (req, res) =>{
     let required = [
-        {name: 'id', type: 'string'},
+        {name: 'memberId', type: 'string'},
        
     ];
     req.body = trimCollection(req.body);
