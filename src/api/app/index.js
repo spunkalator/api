@@ -10,6 +10,9 @@ router.get('/popular', controller.popular);
 router.post('/nearby', controller.nearbyUsers)
 router.post('/like/:username', controller.likeUser);
 
+router.post('/toogleSubscription', controller.toogleSubscription);
+
+
 router.post('/logChatHistory', controller.logChatHistory);
 router.get('/getChatHistory/:memberId', controller.getChatHistory);
 

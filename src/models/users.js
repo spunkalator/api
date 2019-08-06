@@ -14,7 +14,6 @@ const mongoose = require('mongoose'),
 
 let UsersSchema = new Schema({
     
-    
 
     nickname: { 
         type: String,
@@ -34,7 +33,6 @@ let UsersSchema = new Schema({
         type: String,
 
     },
-    
     gender: { 
         type: String,
     },
@@ -54,6 +52,10 @@ let UsersSchema = new Schema({
         required: true,
         default: false
     },
+    SubscriptionStatus: { 
+        type: String,
+    },
+
     defaultImage : String,
     images: [{
         path: String,
