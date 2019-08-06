@@ -48,6 +48,41 @@ exports.logChatHistory = (req, res) => {
 }
 
 
+exports.toogleSubscription = (req, res) => {
+    let required = [
+        {name: 'status', type: 'string'},
+      
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+       Users.updateOne(
+        { email: req.payload.email }, {
+        $set: {
+            SubscriptionStatus: body.status,
+        },
+    }, (err, updated) => {
+       
+        if (err) {
+            console.log(err);
+            return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+        }
+        if (updated && updated.nModified) {
+            return sendSuccessResponse(res, { }, 'Status Updated!');
+        }else{
+            return sendSuccessResponse(res, { }, 'Status Already Updated!');
+        }
+    });
+     
+   }else{
+    return sendErrorResponse(res, {}, 'Some fields are missing');
+   }
+}
+
 exports.getChatHistory = (req, res) =>{
     if(req.params.memberId){
 
