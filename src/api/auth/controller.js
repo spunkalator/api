@@ -97,6 +97,8 @@ exports.authWithToken = (req, res, next) => {
                     nUser.gender     = body.gender;
                     nUser.token     = body.token;
                     nUser.memberId  = generateId();
+                    nUser.defaultImage = "";
+                    nUser.subscriptionStatus = "invalid"
 
                     const payload = { email: body.email };
                     const options = { expiresIn: '1h'};
@@ -162,6 +164,8 @@ exports.register = (req, res, next) => {
                     nUser.email     = body.email;
                     nUser.password  = hash;
                     nUser.memberId  = generateId();
+                    nUser.defaultImage = "";
+                    nUser.subscriptionStatus = "invalid"
 
                     const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};
@@ -228,6 +232,8 @@ exports.registerWithToken = (req, res, next) => {
                     //nUser.password  = hash;
                     nUser.token     = body.token;
                     nUser.memberId  = generateId();
+                    nUser.defaultImage = "";
+                    nUser.subscriptionStatus = "invalid"
 
                     const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};
