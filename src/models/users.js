@@ -52,7 +52,7 @@ let UsersSchema = new Schema({
         required: true,
         default: false
     },
-    SubscriptionStatus: { 
+    subscriptionStatus: { 
         type: String,
     },
 
