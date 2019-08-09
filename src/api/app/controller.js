@@ -129,6 +129,36 @@ exports.quickmatch = (req, res)  => {
 
 }
 
+exports.viewedYou = (req, res)  => {
+   
+        Users.aggregate([ 
+            {$sample: {size: 8} },
+        ], (err, result) => {
+            console.log(err);
+            if (err) 
+            {
+                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+            }
+            return sendSuccessResponse(res, result, 'users');   
+        });  
+
+}
+
+exports.likes = (req, res)  => {
+   
+    Users.aggregate([ 
+        {$sample: {size: 8} },
+    ], (err, result) => {
+        console.log(err);
+        if (err) 
+        {
+            return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+        }
+        return sendSuccessResponse(res, result, 'users');   
+    });  
+
+}
+
 exports.nearbyUsers = (req, res) => {
     let required = [
         {name: 'location', type: 'object'},
