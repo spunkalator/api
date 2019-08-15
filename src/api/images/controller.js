@@ -27,3 +27,14 @@ exports.uploadImages = (req, res)  => {
     
 }
 
+
+
+exports.deleteImage = (req, res)  => {
+    
+   
+                return sendSuccessResponse(res, {}, 'Image Deleted');
+           
+    
+}
+
+

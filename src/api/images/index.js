@@ -26,5 +26,7 @@ filename: function (req, file, cb) {
 const parser = multer({ storage: storage });
 
 
-router.post('/uploadImage', parser.single("image"), controller.uploadImages)
+router.post('/uploadImage', parser.single("image"), controller.uploadImages);
+router.post('/deleteImage', controller.deleteImage)
+
 module.exports = router;
