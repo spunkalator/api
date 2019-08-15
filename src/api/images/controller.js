@@ -27,3 +27,17 @@ exports.uploadImages = (req, res)  => {
     
 }
 
+
+
+exports.deleteImage = (req, res)  => {
+
+    if(req.body.image){
+    
+         return sendSuccessResponse(res, {}, 'Image Deleted');
+
+    }else{
+        return sendErrorResponse(res, {}, 'Image name is required');
+        
+    }
+               
+}
