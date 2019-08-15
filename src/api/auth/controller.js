@@ -193,11 +193,8 @@ exports.registerWithToken = (req, res, next) => {
     let required = [
         {name: 'nickname', type: 'string'},
         {name: 'gender', type: 'string'},
-        {name: 'email', type: 'string'},
-        {name: 'token', type: 'string'},
-       
+        {name: 'token', type: 'string'}, 
     ];
-
     req.body = trimCollection(req.body);
     const body = req.body;
     console.log(req.body);
@@ -205,14 +202,7 @@ exports.registerWithToken = (req, res, next) => {
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        Users.find({email: req.body.email}, function (err, result) {
-            if (err) {
-                return sendErrorResponse(res, {err}, 'Something went wrong');
-            }
-            if (result && result.length > 0) {
-                return sendErrorResponse(res, {result : result.password}, 'Someone else has registered with that email');
-            }else{
-
+       
               Users.find({nickname: req.body.nickname}, function (err, result) {
 
                     if (err) {
@@ -225,13 +215,13 @@ exports.registerWithToken = (req, res, next) => {
                    
 
 
-                    let nUser       = new Users();
+                    let nUser         = new Users();
                     //let hash        = bcrypt.hashSync(body.password, 10);
-                    nUser.nickname  = body.nickname;
-                    nUser.email     = body.email;
+                    nUser.nickname    = body.nickname;
+                    nUser.email       = body.email || "";
                     //nUser.password  = hash;
-                    nUser.token     = body.token;
-                    nUser.memberId  = generateId();
+                    nUser.token       = body.token;
+                    nUser.memberId    = generateId();
                     nUser.defaultImage = "";
                     nUser.subscriptionStatus = "invalid"
 
@@ -250,8 +240,8 @@ exports.registerWithToken = (req, res, next) => {
                      });
                    }                
             });   
-           }
-        });
+           
+        
     }else{
         return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
     } 
