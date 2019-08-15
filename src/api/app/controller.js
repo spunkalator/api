@@ -155,7 +155,7 @@ exports.likes = (req, res)  => {
             return sendErrorResponse(res, {}, 'Something went wrong, please try again');
         }
         number  = result.length;
-        return sendSuccessResponse(res, {result, count: number, subscriptionStatus: "valid"}, 'details');   
+        return sendSuccessResponse(res, {count: number, subscriptionStatus: "valid", result}, 'details');   
     });  
 
 }
