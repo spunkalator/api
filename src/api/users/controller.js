@@ -25,9 +25,8 @@ exports.editProfile = (req, res) => {
                 nUser.nickname        = body.nickname;
                 nUser.description     = body.description;
 
-                imagefile = {
-                    path: body.image
-                };
+                imagefile = body.image
+                
 
                 Users.updateOne({email: userDetails.email}, {
                     $set: {
@@ -43,7 +42,7 @@ exports.editProfile = (req, res) => {
                    
                 }, (err, updated) => {
                     
-                    console.log(updated, "updated");
+                    console.log("updated");
 
                     if (err) {
                         console.log(err);

@@ -30,14 +30,21 @@ exports.uploadImages = (req, res)  => {
 
 
 exports.deleteImage = (req, res)  => {
-
     if(req.body.image){
-    
-         return sendSuccessResponse(res, {}, 'Image Deleted');
 
+       Users.updateOne( {email: req.payload.email}, 
+
+        { $pull: { images: { $in: req.body.image } } 
+      }, (err, updated) => {
+
+          if(updated && updated.nModified){
+            return sendSuccessResponse(res, {}, 'Image Deleted');
+          }else{
+            return sendSuccessResponse(res, {}, 'Image Already Deleted');
+          }
+
+       });
     }else{
-        return sendErrorResponse(res, {}, 'Image name is required');
-        
-    }
-               
+        return sendErrorResponse(res, {}, 'Image name is required');  
+    }        
 }

@@ -57,9 +57,7 @@ let UsersSchema = new Schema({
     },
 
     defaultImage : String,
-    images: [{
-        path: String,
-    }],
+    images: [],
     likes: Number,
     created: {type: Date, require:true, default: Date.now}
 
