@@ -47,6 +47,29 @@ exports.logChatHistory = (req, res) => {
     }
 }
 
+exports.reportUser = (req, res) =>{
+    let required = [
+        {name: 'report', type: 'string'},
+        {name: 'email', type: 'string'},
+        {name: 'nickname', type: 'string'},
+      
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+
+        return sendSuccessResponse(res, {}, 'We have received your report. We will review and get back to you');
+
+
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+
+}
 
 exports.toogleSubscription = (req, res) => {
     let required = [

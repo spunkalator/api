@@ -13,7 +13,7 @@ router.post('/like/:username', controller.likeUser);
 router.post('/viewedYou', controller.viewedYou);
 router.post('/likes', controller.likes);
 
-
+router.post('/reportUser', controller.reportUser);
 
 
 router.post('/toogleSubscription', controller.toogleSubscription);
