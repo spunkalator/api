@@ -1,12 +1,13 @@
 
-const {validParam, sendErrorResponse, sendSuccessResponse, trimCollection} = require('../../helpers/utility');
-const mongoose = require('mongoose');
-const Users = mongoose.model('User');
-const ChatHistory = mongoose.model('ChatHistory');
-const ObjectId = require('mongodb').ObjectId;
+    const {validParam, sendErrorResponse, sendSuccessResponse, trimCollection} = require('../../helpers/utility');
+    const mongoose = require('mongoose');
+    const Users = mongoose.model('User');
+    const ChatHistory = mongoose.model('ChatHistory');
+    const BlockedUser = mongoose.model('BlockedUsersHistory');
+    const ObjectId = require('mongodb').ObjectId;
 
 
-exports.logChatHistory = (req, res) => {
+  exports.logChatHistory = (req, res) => {
     let required = [
         {name: 'from', type: 'string'},
         {name: 'to', type: 'string'},
@@ -16,15 +17,17 @@ exports.logChatHistory = (req, res) => {
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        ChatHistory.findOne( {from: body.from, to: body.to}, (err, result) => 
+        ChatHistory.findOne({from: body.from, to: body.to},(err, result) => 
         {
             if (err)
             {
                 console.log(err);
                 return sendErrorResponse(res, {}, 'Something went wrong, please try again');
             }
-            if (result) {
-                    return sendSuccessResponse(res, {}, 'History already logged');
+            if (result){
+
+                return sendSuccessResponse(res, {}, 'History already logged');
+
             }else{
                 
                 let nHistory      = new ChatHistory();
@@ -38,7 +41,7 @@ exports.logChatHistory = (req, res) => {
                         return sendErrorResponse(res, {}, 'Something went wrong');
                     }
                     return sendSuccessResponse(res, {}, 'History logged');
-                 });
+                });
             }
         });
     }else
@@ -47,12 +50,11 @@ exports.logChatHistory = (req, res) => {
     }
 }
 
-exports.reportUser = (req, res) =>{
+  exports.blockUser = (req, res) =>{
     let required = [
-        {name: 'report', type: 'string'},
-        {name: 'email', type: 'string'},
-        {name: 'nickname', type: 'string'},
-      
+        {name: 'blocker', type: 'string'},
+        {name: 'blocked', type: 'string'},
+        {name: 'status', type: 'string'},
     ];
     
     req.body = trimCollection(req.body);
@@ -61,9 +63,20 @@ exports.reportUser = (req, res) =>{
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
+        BlockedUser.updateOne(
+            {blocker: body.blocker, blocked: body.blocked},
+            { $set: { reason: body.reason, blocker: body.blocker, blocked: body.blocked, status : body.status } },
+            { upsert: true },
+            (err, updated) => {
 
-        return sendSuccessResponse(res, {}, 'We have received your report. We will review and get back to you');
+                if(err)
+                    {
+                        console.log(err);
+                        return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                    }
+                    return sendSuccessResponse(res, {}, 'History logged');
 
+            });
 
     }else{
         return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
@@ -74,7 +87,6 @@ exports.reportUser = (req, res) =>{
 exports.toogleSubscription = (req, res) => {
     let required = [
         {name: 'status', type: 'string'},
-      
     ];
     
     req.body = trimCollection(req.body);
@@ -109,12 +121,10 @@ exports.toogleSubscription = (req, res) => {
 exports.getChatHistory = (req, res) =>{
     if(req.params.memberId){
 
-
-        
-          ChatHistory.aggregate([
-            {$match: {from: req.params.memberId} },
-            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'details'
-            }},
+        ChatHistory.aggregate([
+            {$match: {from: req.params.memberId}},
+            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'details'}},
+            {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'to', as: 'blockedStatus'}},
         ], (err, users) => {
               if (err) {  
                 console.log(err);  
