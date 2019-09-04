@@ -19,4 +19,6 @@ router.post('/toogleSubscription', controller.toogleSubscription);
 router.post('/logChatHistory', controller.logChatHistory);
 router.get('/getChatHistory/:memberId', controller.getChatHistory);
 
+router.get('/getBlockedHistory/:memberId', controller.getBlockedHistory);
+
 module.exports = router;

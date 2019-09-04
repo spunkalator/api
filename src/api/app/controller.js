@@ -139,6 +139,28 @@ exports.getChatHistory = (req, res) =>{
 }
 
 
+exports.getBlockedHistory = (req, res) =>{
+    if(req.params.memberId){
+
+        BlockedUser.aggregate([
+            {$match: {blocker: req.params.memberId}},
+            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'blocked', as: 'blockedHistory'}},
+           
+        ], (err, users) => {
+              if (err) {  
+                console.log(err);  
+                return sendErrorResponse(res, {}, 'Something went wrong');
+            }
+              return sendSuccessResponse(res, users, 'Your history');
+        });
+    }else
+    {
+      return sendErrorResponse(res, {}, 'MemberId is required');
+    }
+}
+
+
+
 exports.quickmatch = (req, res)  => {
    
     if (req.params.n && !isNaN(req.params.n)) {
