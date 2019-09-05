@@ -203,6 +203,7 @@ exports.likes = (req, res)  => {
    
     Users.aggregate([ 
         {$sample: {size: 8} },
+        {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
     ], (err, result) => {
         console.log(err);
         if (err) 
@@ -226,6 +227,7 @@ exports.nearbyUsers = (req, res) => {
 
         Users.aggregate([ 
             {$sample: {size: 10} },
+            {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
         ], (err, popular) => {
             console.log(err);
             if (err) 
@@ -261,6 +263,7 @@ exports.popular = (req, res)  => {
     
     Users.aggregate([ 
         {$sample: {size: 10} },
+        {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
     ], (err, popular) => {
         console.log(err);
         if (err) 
