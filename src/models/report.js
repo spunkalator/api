@@ -5,7 +5,7 @@ const mongoose = require('mongoose'),
 
   
 
-let BlockedUsersHistorySchema = new Schema({
+let reportsSchema = new Schema({
     
     blocker: String,      
     blocked: String,
@@ -15,4 +15,4 @@ let BlockedUsersHistorySchema = new Schema({
     created: {type: Date, require:true, default: Date.now}
 
 });
-module.exports = mongoose.model('BlockedUsersHistory', BlockedUsersHistorySchema);
+module.exports = mongoose.model('report', reportsSchema);

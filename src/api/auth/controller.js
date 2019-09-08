@@ -5,7 +5,7 @@ const Users = mongoose.model('User');
 const ObjectId = require('mongodb').ObjectId;
 const bcrypt = require('bcrypt');
 const jwt  = require('jsonwebtoken');
-
+const nodemailer = require('nodemailer');
 
 
 
@@ -247,14 +247,78 @@ exports.registerWithToken = (req, res, next) => {
     } 
 }
 
+exports.resetPassword = (req, res) =>
+{
+    if (req.params.code) {
 
+        let required = [
+            {name: 'password', type: 'string'},
+            {name: 'cpass', type: 'string'},
+        ];
+        
+        req.body = trimCollection(req.body);
+        const body = req.body;
+        console.log(req.body);
+
+        let hasRequired = validParam(req.body, required);
+        if (hasRequired.success) {
+
+            if(body.password !== body.cpass){
+
+                res.render('resetPassword', { error: 'Passwords do not match', code : req.params.code });
+
+            }else{
+
+                Users.findOne({forgotPassword: req.params.code},(err, result) => 
+                {
+                  
+                    if (err)
+                    {
+                        console.log(err);
+                        res.render('resetPassword', { error: 'Something went wrong, please try again', code : req.params.code });
+                    }
+                    if(result == null ){
+                        res.render('resetPassword', { error: 'Invalid code', code : req.params.code  });
+                    }else{
+                     
+
+                        let hash        = bcrypt.hashSync(body.password, 10);
+                        Users.updateOne(
+                            { email: result.email }, {
+                            $set: {
+                                password:hash,
+                                forgotPassword: ""
+                            },
+                        }, (err, updated) => {
+                        
+                            if (err) {
+                                console.log(err);
+                                res.render('resetPassword', { error: 'Something went wrong, Please try again', code : req.params.code  });
+                            }
+                            if (updated && updated.nModified) {
+                                res.render('resetPassword', { error: 'Password has been changed, You can login now', code : req.params.code  });
+                            }
+                        });
+                }
+            });
+
+            }
+        }else{
+
+            res.render('resetPassword', { error: 'All Fields are required', code : req.params.code });
+        }
+
+ }else{
+    return sendErrorResponse(res, {}, 'No reset code found');
+ }
+
+
+}
 
 exports.forgotPassword = (req, res) =>
 {
     let required = [
-        {name: 'email', type: 'string'},
-      
-       
+        {name: 'email', type: 'string'}, 
     ];
     
     req.body = trimCollection(req.body);
@@ -273,11 +337,59 @@ exports.forgotPassword = (req, res) =>
             }
             if (result) {
                 if(result.email == body.email ){
-                    return sendSuccessResponse(res, {}, 'Please check your email, a reset link has been sent');
 
+
+                   
+
+                    let transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'awele.osuka@gmail.com',
+                            pass: 'kawelouz'
+                        }
+                    });
+
+                    let fullUrl = 'https://zingam-api.herokuapp.com/auth/resetPassword/';
+                    let code =  generateId();
+                    let url  = fullUrl + code;
+
+                    console.log(url, "urll");
+
+                    let mailOptions = {
+                        from: 'ZingAm',
+                        to: req.body.email,
+                        subject: 'Reset your ZingAm password',
+                        text: 'Please use this link to reset your password: ' + url,
+                    };
+
+                    Users.updateOne(
+                        { email: body.email}, {
+                        $set: {
+                            forgotPassword:code,
+                        },
+                    }, (err, updated) => {
+                      
+                        if (err) {
+                            console.log(err);
+                            return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                        }
+                        if (updated && updated.nModified) {
+                            
+                            transporter.sendMail(mailOptions, function(error, info){
+                                if (error) {
+                                    console.log(error);
+                                
+                                    return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                                } else {
+                    
+                                return sendSuccessResponse(res, {}, 'Please check your email, a reset link has been sent');
+                    
+                                }
+                            });
+                            
+                        }
+                    });
                 }
-                
-               
             }else{
                 return sendErrorResponse(res, {}, 'We can\'t seem to find that email, please check again ');
             }

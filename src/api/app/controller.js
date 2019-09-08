@@ -1,10 +1,13 @@
 
-    const {validParam, sendErrorResponse, sendSuccessResponse, trimCollection} = require('../../helpers/utility');
-    const mongoose = require('mongoose');
-    const Users = mongoose.model('User');
-    const ChatHistory = mongoose.model('ChatHistory');
-    const BlockedUser = mongoose.model('BlockedUsersHistory');
-    const ObjectId = require('mongodb').ObjectId;
+const {validParam, sendErrorResponse, sendSuccessResponse, trimCollection} = require('../../helpers/utility');
+const mongoose = require('mongoose');
+const Users = mongoose.model('User');
+const ChatHistory = mongoose.model('ChatHistory');
+
+const report = mongoose.model('report');
+
+const BlockedUser = mongoose.model('BlockedUsersHistory');
+const ObjectId = require('mongodb').ObjectId;
 
 
   exports.logChatHistory = (req, res) => {
@@ -65,7 +68,7 @@
 
         BlockedUser.updateOne(
             {blocker: body.blocker, blocked: body.blocked},
-            { $set: { reason: body.reason, blocker: body.blocker, blocked: body.blocked, status : body.status } },
+            { $set: { blocker: body.blocker, blocked: body.blocked, status : body.status } },
             { upsert: true },
             (err, updated) => {
 
@@ -83,6 +86,43 @@
     }
 
 }
+
+exports.reportUser = (req, res) =>{
+
+    let required = [
+        {name: 'reporter', type: 'string'},
+        {name: 'reported', type: 'string'},
+        {name: 'reason', type: 'string'},
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+
+        let nReport         = new report();
+        nReport.reporter     = body.reporter;
+        nReport.reported     = body.reported;
+        nReport.reason      = body.reason;
+        
+        console.log(req.body);
+        nReport.save((err) => {
+            console.log(err);
+            if (err) {
+                console.log(err);
+                return sendErrorResponse(res, {}, 'Something went wrong');
+            }
+            return sendSuccessResponse(res, '', 'We have received your report, We\'ll look into it');
+         });
+
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+
+}
+
 
 exports.toogleSubscription = (req, res) => {
     let required = [

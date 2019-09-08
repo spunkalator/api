@@ -33,6 +33,7 @@ let UsersSchema = new Schema({
         type: String,
 
     },
+    forgotPassword: String,
     gender: { 
         type: String,
     },
