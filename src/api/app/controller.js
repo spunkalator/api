@@ -77,7 +77,7 @@ const ObjectId = require('mongodb').ObjectId;
                         console.log(err);
                         return sendErrorResponse(res, {}, 'Something went wrong, please try again');
                     }
-                    return sendSuccessResponse(res, {}, 'User has been blocked');
+                    return sendSuccessResponse(res, {}, 'User has been ' + body.status);
 
             });
 
