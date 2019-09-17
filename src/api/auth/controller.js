@@ -128,6 +128,7 @@ exports.register = (req, res, next) => {
         {name: 'gender', type: 'string'},
         {name: 'email', type: 'string'},
         {name: 'password', type: 'string'},
+        {name: 'dob', type: 'string'}, 
        
     ];
 
@@ -165,7 +166,8 @@ exports.register = (req, res, next) => {
                     nUser.password  = hash;
                     nUser.memberId  = generateId();
                     nUser.defaultImage = "";
-                    nUser.subscriptionStatus = "invalid"
+                    nUser.subscriptionStatus = "invalid";
+                    nUser.dob                = body.dob;
 
                     const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};
@@ -193,6 +195,7 @@ exports.registerWithToken = (req, res, next) => {
     let required = [
         {name: 'nickname', type: 'string'},
         {name: 'gender', type: 'string'},
+        {name: 'dob', type: 'string'}, 
         {name: 'token', type: 'string'}, 
     ];
     req.body = trimCollection(req.body);
@@ -223,7 +226,8 @@ exports.registerWithToken = (req, res, next) => {
                     nUser.token       = body.token;
                     nUser.memberId    = generateId();
                     nUser.defaultImage = "";
-                    nUser.subscriptionStatus = "invalid"
+                    nUser.subscriptionStatus = "invalid";
+                    nUser.dob                = body.dob;
 
                     const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};

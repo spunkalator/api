@@ -37,6 +37,7 @@ let UsersSchema = new Schema({
     gender: { 
         type: String,
     },
+    dob: String,
     birthday: Date,
     lastLocation: {
         type: ['Point'],
