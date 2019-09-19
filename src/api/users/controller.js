@@ -65,6 +65,54 @@ exports.editProfile = (req, res) => {
 
 }
 
+exports.editGD = (req, res) =>
+{
+    let required = [
+        {name: 'gender', type: 'string'},
+        {name: 'dob', type: 'string'},
+    ];
+
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+     
+                 userDetails = req.payload;
+      
+                
+                let nUser             = new Users();
+                nUser.gender          = body.gender;
+                nUser.dob             = body.dob;
+
+                Users.updateOne({email: userDetails.email}, {
+                    $set: {
+                        gender: body.gender,
+                        dob: body.dob,  
+                    },
+                }, (err, updated) => {
+                    
+                    console.log("updated");
+
+                    if (err) {
+                        console.log(err);
+                        return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                    }
+
+                    if (updated && updated.nModified) {
+                        return sendSuccessResponse(res, {}, 'Profile has been updated');
+                    } else {
+                        return sendErrorResponse(res, {}, 'Nothing changed, you\'re all set!');
+                    }
+                });
+
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    } 
+ 
+}
+
+
 exports.profileDetails = (req, res) => {
     if(req.params.nickname){
         Users.findOne( {nickname: req.params.nickname}, (err, result) => 
