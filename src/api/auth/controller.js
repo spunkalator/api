@@ -93,6 +93,8 @@ exports.authWithToken = (req, res, next) => {
                     let nUser       = new Users();
                     nUser.nickname  = body.nickname;
                     nUser.email     = body.email;
+                    nUser.gender    = "";
+                    nUser.dob       = ""
                   
                     nUser.token     = body.token;
                     nUser.memberId  = generateId();
@@ -167,6 +169,7 @@ exports.register = (req, res, next) => {
                     nUser.defaultImage = "";
                     nUser.subscriptionStatus = "invalid";
                     nUser.dob                = body.dob;
+                    nUser.gender             = body.gender;
 
                     const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};

@@ -34,11 +34,10 @@ let UsersSchema = new Schema({
 
     },
     forgotPassword: String,
-    gender: { 
-        type: String,
-    },
+    gender: String,
+    
     dob: String,
-    birthday: Date,
+   
     lastLocation: {
         type: ['Point'],
         coordinates: [ ],
