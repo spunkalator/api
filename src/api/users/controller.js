@@ -100,9 +100,9 @@ exports.editGD = (req, res) =>
                     }
 
                     if (updated && updated.nModified) {
-                        return sendSuccessResponse(res, {}, 'Profile has been updated');
+                        return sendSuccessResponse(res, {nUser}, 'Profile has been updated');
                     } else {
-                        return sendErrorResponse(res, {}, 'Nothing changed, you\'re all set!');
+                        return sendErrorResponse(res, {nUser}, 'Nothing changed, you\'re all set!');
                     }
                 });
 
