@@ -60,7 +60,6 @@ exports.authWithToken = (req, res, next) => {
 
     let required = [
         {name: 'nickname', type: 'string'},
-        {name: 'gender', type: 'string'},
         {name: 'email', type: 'string'},
         {name: 'token', type: 'string'},
        
@@ -74,7 +73,7 @@ exports.authWithToken = (req, res, next) => {
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        Users.findOne( {email: body.email}, (err, result) => 
+        Users.findOne( {nickname: body.nickname}, (err, result) => 
             {
                 if (err)
                 {
@@ -94,13 +93,13 @@ exports.authWithToken = (req, res, next) => {
                     let nUser       = new Users();
                     nUser.nickname  = body.nickname;
                     nUser.email     = body.email;
-                    nUser.gender     = body.gender;
+                  
                     nUser.token     = body.token;
                     nUser.memberId  = generateId();
                     nUser.defaultImage = "";
                     nUser.subscriptionStatus = "invalid"
 
-                    const payload = { email: body.email };
+                    const payload = { nickname: result.nickname, email: result.email };
                     const options = { expiresIn: '1h'};
                     const secret = process.env.JWT_SECRET;
                     const token = jwt.sign(payload, secret, options);
@@ -191,65 +190,6 @@ exports.register = (req, res, next) => {
     } 
 }
 
-exports.registerWithToken = (req, res, next) => {
-    let required = [
-        {name: 'nickname', type: 'string'},
-        {name: 'gender', type: 'string'},
-        {name: 'dob', type: 'string'}, 
-        {name: 'token', type: 'string'}, 
-    ];
-    req.body = trimCollection(req.body);
-    const body = req.body;
-    console.log(req.body);
-
-    let hasRequired = validParam(req.body, required);
-    if (hasRequired.success) {
-
-       
-              Users.find({nickname: req.body.nickname}, function (err, result) {
-
-                    if (err) {
-                        return sendErrorResponse(res, {err}, 'Something went wrong');
-                    }
-                    if (result && result.length > 0) {
-                        return sendErrorResponse(res, {}, 'Someone else has registered with that nickname');
-                    }else{
-                    
-                   
-
-
-                    let nUser         = new Users();
-                    //let hash        = bcrypt.hashSync(body.password, 10);
-                    nUser.nickname    = body.nickname;
-                    nUser.email       = body.email || "";
-                    //nUser.password  = hash;
-                    nUser.token       = body.token;
-                    nUser.memberId    = generateId();
-                    nUser.defaultImage = "";
-                    nUser.subscriptionStatus = "invalid";
-                    nUser.dob                = body.dob;
-
-                    const payload = { nickname: body.nickname, email: body.email };
-                    const options = { expiresIn: '1h'};
-                    const secret = process.env.JWT_SECRET;
-                    const token = jwt.sign(payload, secret, options);
-                
-                    console.log(req.body);
-                    nUser.save((err) => {
-                        console.log(err);
-                        if (err) {
-                            return sendErrorResponse(res, {err}, 'Something went wrong');
-                        }
-                        return sendSuccessResponse(res, {token: token, user: nUser}, 'User registered');
-                     });
-                   }                
-            });   
-           
-        
-    }else{
-        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
-    } 
-}
 
 exports.resetPassword = (req, res) =>
 {
