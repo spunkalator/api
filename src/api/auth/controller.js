@@ -99,7 +99,7 @@ exports.authWithToken = (req, res, next) => {
                     nUser.defaultImage = "";
                     nUser.subscriptionStatus = "invalid"
 
-                    const payload = { nickname: result.nickname, email: result.email };
+                    const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};
                     const secret = process.env.JWT_SECRET;
                     const token = jwt.sign(payload, secret, options);
