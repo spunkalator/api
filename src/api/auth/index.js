@@ -6,7 +6,6 @@ let controller = require('./controller');
 router.post('/', controller.auth);
 router.post('/authWithToken', controller.authWithToken);
 router.post('/register', controller.register);
-router.post('/registerWithToken', controller.registerWithToken);
 router.post('/forgotPassword', controller.forgotPassword);
 
 router.post('/resetPassword/:code', controller.resetPassword);
