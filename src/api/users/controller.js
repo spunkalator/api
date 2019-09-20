@@ -85,7 +85,7 @@ exports.editGD = (req, res) =>
                 nUser.gender          = body.gender;
                 nUser.dob             = body.dob;
 
-                Users.updateOne({email: userDetails.email}, {
+                Users.updateOne({nickname: userDetails.nickname}, {
                     $set: {
                         gender: body.gender,
                         dob: body.dob,  
