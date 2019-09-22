@@ -66,20 +66,42 @@ const ObjectId = require('mongodb').ObjectId;
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        BlockedUser.updateOne(
-            {blocker: body.blocker, blocked: body.blocked},
-            { $set: { blocker: body.blocker, blocked: body.blocked, status : body.status } },
-            { upsert: true },
-            (err, updated) => {
+        if(body.status === "unblocked")
+        {
 
+            BlockedUser.deleteOne( {blocked: body.blocked, blocker: body.blocker}, (err, del) => {
                 if(err)
-                    {
-                        console.log(err);
-                        return sendErrorResponse(res, {}, 'Something went wrong, please try again');
-                    }
-                    return sendSuccessResponse(res, {}, 'User has been ' + body.status);
+                {
+                    console.log(err);
+                    return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                }
+
+                if(del.deletedCount){
+                    return sendSuccessResponse(res, {}, 'User has been unblocked');
+                }else{
+                    return sendSuccessResponse(res, {}, 'User has already been unblocked');
+                }
+
+             });
+
+           
+        }else{
+
+            BlockedUser.updateOne(
+                {blocker: body.blocker, blocked: body.blocked},
+                { $set: { blocker: body.blocker, blocked: body.blocked, status : body.status } },
+                { upsert: true },
+                (err, updated) => {
+
+                    if(err)
+                        {
+                            console.log(err);
+                            return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                        }
+                        return sendSuccessResponse(res, {}, 'User has been ' + body.status);
 
             });
+        }
 
     }else{
         return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
