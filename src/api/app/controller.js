@@ -7,6 +7,8 @@ const ChatHistory = mongoose.model('ChatHistory');
 const report = mongoose.model('report');
 
 const BlockedUser = mongoose.model('BlockedUsersHistory');
+const likedHistory = mongoose.model('LikedUsersHistory');
+
 const ObjectId = require('mongodb').ObjectId;
 
 
@@ -108,6 +110,65 @@ const ObjectId = require('mongodb').ObjectId;
     }
 
 }
+
+exports.likeUser = (req, res) => {
+    
+    let required = [
+        {name: 'liker', type: 'string'},
+        {name: 'liked', type: 'string'},
+       
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        likedHistory.updateOne(
+            {liker: body.liker, liked: body.liked},
+            { $set: { liker: body.liker, liked: body.liked} },
+            { upsert: true },
+            (err, updated) => {
+
+                if(err)
+                    {
+                        console.log(err);
+                        return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                    }
+                    return sendSuccessResponse(res, {}, 'User has been Liked');
+
+        });
+
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+}
+
+exports.likes = (req, res)  => {
+
+    likedHistory.aggregate([
+        {$match: {liked: req.params.memberId}}, 
+        {$sample: {size: 8} },
+        {$lookup: {from: 'users', foreignField: 'memberId', localField: 'liker', as: 'liker'}},
+    ], (err, result) => {
+        console.log(err);
+        if (err) 
+        {
+            return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+        }
+
+        Users.findOne( {nickname: req.payload.nickname}, (err, result2) => 
+        {
+               
+        number  = result.length;
+        return sendSuccessResponse(res, {count: number, subscriptionStatus: result2.subscriptionStatus, result}, 'details');
+
+        });
+    });  
+
+}
+
 
 exports.reportUser = (req, res) =>{
 
@@ -221,8 +282,6 @@ exports.getBlockedHistory = (req, res) =>{
     }
 }
 
-
-
 exports.quickmatch = (req, res)  => {
    
     if (req.params.n && !isNaN(req.params.n)) {
@@ -261,22 +320,7 @@ exports.viewedYou = (req, res)  => {
 
 }
 
-exports.likes = (req, res)  => {
-   
-    Users.aggregate([ 
-        {$sample: {size: 8} },
-        {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
-    ], (err, result) => {
-        console.log(err);
-        if (err) 
-        {
-            return sendErrorResponse(res, {}, 'Something went wrong, please try again');
-        }
-        number  = result.length;
-        return sendSuccessResponse(res, {count: number, subscriptionStatus: "valid", result}, 'details');   
-    });  
 
-}
 
 exports.nearbyUsers = (req, res) => {
     let required = [
@@ -339,31 +383,6 @@ exports.popular = (req, res)  => {
 }
 
 
-exports.likeUser = (req, res) => {
-    
-    console.log(req.params.username);
-    if (req.params.username) {
-
-        Users.updateOne(
-            { nickname: req.params.username }, {
-            $inc: {
-                likes:1,
-            },
-        }, (err, updated) => {
-            console.log(updated, "updated");
-            if (err) {
-                console.log(err);
-                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
-            }
-            if (updated && updated.nModified) {
-                return sendSuccessResponse(res, { }, 'Liked!');
-            }
-        });
-
-    }else{
-        return sendErrorResponse(res, {}, 'Username of the person you\'re liking is required');
-    }
-}
 
 
 function tripFilter (query) {

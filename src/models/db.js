@@ -37,4 +37,5 @@ mongoose.connection.on('disconnected', function () {
 require('./users');
 require('./chat-history');
 require('./blocked-users-history');
+require('./liked-users-history');
 require('./report');

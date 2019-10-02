@@ -11,7 +11,7 @@ router.post('/nearby', controller.nearbyUsers)
 router.post('/like/:username', controller.likeUser);
 
 router.post('/viewedYou', controller.viewedYou);
-router.post('/likes', controller.likes);
+router.post('/likes/:memberId', controller.likes);
 
 router.post('/blockUser', controller.blockUser);
 
