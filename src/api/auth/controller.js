@@ -130,7 +130,7 @@ exports.register = (req, res, next) => {
         {name: 'email', type: 'string'},
         {name: 'password', type: 'string'},
         {name: 'dob', type: 'string'}, 
-       
+        {name: 'image', type: 'string'}
     ];
 
     req.body = trimCollection(req.body);
@@ -170,6 +170,7 @@ exports.register = (req, res, next) => {
                     nUser.subscriptionStatus = "invalid";
                     nUser.dob                = body.dob;
                     nUser.gender             = body.gender;
+                    nUser.defaultImage       = body.image;
 
                     const payload = { nickname: body.nickname, email: body.email };
                     const options = { expiresIn: '1h'};

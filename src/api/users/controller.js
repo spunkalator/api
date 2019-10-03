@@ -70,6 +70,7 @@ exports.editGD = (req, res) =>
     let required = [
         {name: 'gender', type: 'string'},
         {name: 'dob', type: 'string'},
+        {name: 'image', type: 'string'}
     ];
 
     req.body = trimCollection(req.body);
@@ -88,7 +89,9 @@ exports.editGD = (req, res) =>
                 Users.updateOne({nickname: userDetails.nickname}, {
                     $set: {
                         gender: body.gender,
-                        dob: body.dob,  
+                        dob: body.dob, 
+                        defaultImage: body.image,
+
                     },
                 }, (err, updated) => {
                     
@@ -102,7 +105,7 @@ exports.editGD = (req, res) =>
                     if (updated && updated.nModified) {
                         return sendSuccessResponse(res, {nUser}, 'Profile has been updated');
                     } else {
-                        return sendErrorResponse(res, {nUser}, 'Nothing changed, you\'re all set!');
+                        return sendErrorResponse(res, {nUser}, 'Profile has been updated');
                     }
                 });
 
