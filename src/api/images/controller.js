@@ -31,8 +31,9 @@ exports.uploadImages = (req, res)  => {
 
 exports.deleteImage = (req, res)  => {
     if(req.body.image){
+     console.log(req.payload, "payload");
 
-       Users.updateOne( {email: req.payload.email}, 
+       Users.updateOne( {email: req.body.email}, 
 
         { $pull: { images: { $in: req.body.image } } 
       }, (err, updated) => {
