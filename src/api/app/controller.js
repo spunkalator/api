@@ -162,8 +162,8 @@ exports.likes = (req, res)  => {
         {
                
         number  = result.length;
-        return sendSuccessResponse(res, {count: number, subscriptionStatus: result2.subscriptionStatus, result}, 'details');
-
+        //return sendSuccessResponse(res, {count: number, subscriptionStatus: result2.subscriptionStatus, result}, 'details');
+        res.send({count: number, subscriptionStatus: result2.subscriptionStatus, result});
         });
     });  
 
