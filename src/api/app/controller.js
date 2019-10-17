@@ -151,6 +151,8 @@ exports.likes = (req, res)  => {
         {$match: {liked: req.params.memberId}}, 
         {$sample: {size: 8} },
         {$lookup: {from: 'users', foreignField: 'memberId', localField: 'liker', as: 'liker'}},
+        {$unwind: '$liker'},
+
     ], (err, result) => {
         console.log(err);
         if (err) 
@@ -162,11 +164,10 @@ exports.likes = (req, res)  => {
         {
                
         number  = result.length;
-        //return sendSuccessResponse(res, {count: number, subscriptionStatus: result2.subscriptionStatus, result}, 'details');
-        res.send({count: number, subscriptionStatus: result2.subscriptionStatus, result});
+        return sendSuccessResponse(res, {count: number, subscriptionStatus: result2.subscriptionStatus, result}, 'details');
+
         });
     });  
-
 }
 
 
