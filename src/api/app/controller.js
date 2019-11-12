@@ -332,7 +332,13 @@ exports.nearbyUsers = (req, res) => {
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        Users.aggregate([ 
+        Users.aggregate([
+            {$match: {
+                'email': {
+                    $ne: req.payload.email ,
+                }
+            }
+            }, 
             {$sample: {size: 10} },
             {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
         ], (err, popular) => {
@@ -368,15 +374,23 @@ exports.nearbyUsers = (req, res) => {
 
 exports.popular = (req, res)  => {
     
-    Users.aggregate([ 
+    Users.aggregate([
+        {$match: {
+            'email': {
+                $ne: req.payload.email ,
+            }
+        }
+        },
         {$sample: {size: 10} },
         {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
+    
     ], (err, popular) => {
         console.log(err);
         if (err) 
         {
             return sendErrorResponse(res, {}, 'Something went wrong, please try again');
         }
+
         return sendSuccessResponse(res, {popular}, 'Popular users');   
     });  
     
