@@ -242,13 +242,66 @@ exports.toogleSubscription = (req, res) => {
    }
 }
 
-exports.getChatHistory = (req, res) =>{
+exports.getChatHistory = (req, res) => {
     if(req.params.memberId){
 
+        // let arr2 = {};
+
+       
+        // ChatHistory.find( {$or: [ { to: req.params.memberId }, { from: req.params.memberId } ] }, (err, result) => 
+        // {
+
+        //        if (err)
+        //         {
+        //             console.log(err);
+        //             return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+        //         }
+              
+
+        //         result.forEach(item => {
+        //             if(item.from === req.params.memberId){
+
+        //                 Users.findOne( { memberId: item.to }, (err, result) => 
+        //                 {
+
+                            
+        //                     arr2 = result;
+        //                     //console. log(arr2, "result22");
+
+        //                 });
+
+                        
+        //             }else{
+
+        //                 Users.findOne( { memberId: item.from }, (err, result2) => 
+        //                 {
+        //                     arr2 = result2;
+                           
+
+                           
+        //                 });
+        //             }
+        //         });
+        //         console. log(arr2, "result24");
+        //         sendSuccessResponse(res, {arr2}, "data");
+               
+        // });
+
+
         ChatHistory.aggregate([
-            {$match: {from: req.params.memberId}},
-            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'details'}},
-            {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'to', as: 'blockedStatus'}},
+        
+            {$match: {
+                $or: [ { to: req.params.memberId }, { from: req.params.memberId } ]
+            }},
+
+            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'to'}},
+            {$unwind: "$to"},
+
+            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'from', as: 'from'}},
+            {$unwind: "$from"},
+
+            {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
+
         ], (err, users) => {
               if (err) {  
                 console.log(err);  
@@ -256,6 +309,11 @@ exports.getChatHistory = (req, res) =>{
             }
               return sendSuccessResponse(res, users, 'Your chat history');
         });
+
+
+
+        
+
     }else
     {
       return sendErrorResponse(res, {}, 'MemberId is required');

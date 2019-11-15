@@ -38,7 +38,7 @@ exports.auth = (req, res, next) => {
 
 
                         const payload = { nickname: result.nickname, email: result.email };
-                        const options = { expiresIn: '1h'};
+                        const options = { expiresIn: '90d'};
                         const secret = process.env.JWT_SECRET;
                         const token = jwt.sign(payload, secret, options);
 
@@ -83,7 +83,7 @@ exports.authWithToken = (req, res, next) => {
                 if (result) {
                     
                         const payload = { nickname: result.nickname, email: result.email };
-                        const options = { expiresIn: '1h'};
+                        const options = { expiresIn: '90d'};
                         const secret = process.env.JWT_SECRET;
                         const token = jwt.sign(payload, secret, options);
 
@@ -102,7 +102,7 @@ exports.authWithToken = (req, res, next) => {
                     nUser.subscriptionStatus = "invalid"
 
                     const payload = { nickname: body.nickname, email: body.email };
-                    const options = { expiresIn: '1h'};
+                    const options = { expiresIn: '90d'};
                     const secret = process.env.JWT_SECRET;
                     const token = jwt.sign(payload, secret, options);
                 
@@ -173,7 +173,7 @@ exports.register = (req, res, next) => {
                     nUser.defaultImage       = body.image;
 
                     const payload = { nickname: body.nickname, email: body.email };
-                    const options = { expiresIn: '1h'};
+                    const options = { expiresIn: '90d'};
                     const secret = process.env.JWT_SECRET;
                     const token = jwt.sign(payload, secret, options);
                 
@@ -189,6 +189,8 @@ exports.register = (req, res, next) => {
             });   
            }
         });
+
+        
     }else{
         return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
     } 
