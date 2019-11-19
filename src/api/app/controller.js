@@ -22,7 +22,7 @@ const ObjectId = require('mongodb').ObjectId;
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        ChatHistory.findOne({from: body.from, to: body.to},(err, result) => 
+        ChatHistory.findOne({ $or: [ {from: body.from, }, {to: body.to}, { from: body.to },{to: body.from} ] },(err, result) => 
         {
             if (err)
             {
@@ -245,70 +245,71 @@ exports.toogleSubscription = (req, res) => {
 exports.getChatHistory = (req, res) => {
     if(req.params.memberId){
 
-        // let arr2 = {};
+        let arr2 = [];
 
        
-        // ChatHistory.find( {$or: [ { to: req.params.memberId }, { from: req.params.memberId } ] }, (err, result) => 
-        // {
+        ChatHistory.find( {$or: [ { to: req.params.memberId }, { from: req.params.memberId } ] }, (err, result) => 
+        {
 
-        //        if (err)
-        //         {
-        //             console.log(err);
-        //             return sendErrorResponse(res, {}, 'Something went wrong, please try again');
-        //         }
+               if (err)
+                {
+                    console.log(err);
+                    return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+                }
               
 
-        //         result.forEach(item => {
-        //             if(item.from === req.params.memberId){
+                for (i = 0; i < result.length; i++) {
+                 
+                    if(result[i].from === req.params.memberId){
 
-        //                 Users.findOne( { memberId: item.to }, (err, result) => 
-        //                 {
+                        Users.findOne( { memberId: result[i].to }, (err, result) => 
+                        {
 
                             
-        //                     arr2 = result;
-        //                     //console. log(arr2, "result22");
+                            arr2.push(result);
+                            console. log(arr2, "result22");
 
-        //                 });
+                        });
 
                         
-        //             }else{
+                    }else{
 
-        //                 Users.findOne( { memberId: item.from }, (err, result2) => 
-        //                 {
-        //                     arr2 = result2;
-                           
+                        Users.findOne( { memberId: result[i].from }, (err, result2) => 
+                        {
+                            arr2.push(result2);
+                           // console. log(arr2, "result24");
 
                            
-        //                 });
-        //             }
-        //         });
-        //         console. log(arr2, "result24");
-        //         sendSuccessResponse(res, {arr2}, "data");
+                        });
+                    }
+                }
+              
+                sendSuccessResponse(res, {arr2}, "data");
                
-        // });
-
-
-        ChatHistory.aggregate([
-        
-            {$match: {
-                $or: [ { to: req.params.memberId }, { from: req.params.memberId } ]
-            }},
-
-            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'to'}},
-            {$unwind: "$to"},
-
-            {$lookup: {from: 'users', foreignField: 'memberId', localField: 'from', as: 'from'}},
-            {$unwind: "$from"},
-
-            {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
-
-        ], (err, users) => {
-              if (err) {  
-                console.log(err);  
-                return sendErrorResponse(res, {}, 'Something went wrong');
-            }
-              return sendSuccessResponse(res, users, 'Your chat history');
         });
+
+
+        // ChatHistory.aggregate([
+        
+        //     {$match: {
+        //         $or: [ { to: req.params.memberId }, { from: req.params.memberId } ]
+        //     }},
+
+        //     {$lookup: {from: 'users', foreignField: 'memberId', localField: 'to', as: 'to'}},
+        //     {$unwind: "$to"},
+
+        //     {$lookup: {from: 'users', foreignField: 'memberId', localField: 'from', as: 'from'}},
+        //     {$unwind: "$from"},
+
+        //     {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
+
+        // ], (err, users) => {
+        //       if (err) {  
+        //         console.log(err);  
+        //         return sendErrorResponse(res, {}, 'Something went wrong');
+        //     }
+        //       return sendSuccessResponse(res, users, 'Your chat history');
+        // });
 
 
 

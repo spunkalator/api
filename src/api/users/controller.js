@@ -20,11 +20,6 @@ exports.editProfile = (req, res) => {
      
       userDetails = req.payload;
       
-                
-                let nUser             = new Users();
-                nUser.nickname        = body.nickname;
-                nUser.description     = body.description;
-
                 imagefile = body.image
                 
 
