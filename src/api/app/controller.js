@@ -22,7 +22,7 @@ const ObjectId = require('mongodb').ObjectId;
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        ChatHistory.findOne({ $or: [ {from: body.from, }, {to: body.to}, { from: body.to },{to: body.from} ] },(err, result) => 
+        ChatHistory.findOne({ $or: [ {from: body.from,to: body.to }, { from: body.to,to: body.from }] },(err, result) => 
         {
             if (err)
             {
