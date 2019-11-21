@@ -222,7 +222,7 @@ exports.toogleSubscription = (req, res) => {
        Users.updateOne(
         { email: req.payload.email }, {
         $set: {
-            SubscriptionStatus: body.status,
+            subscriptionStatus: body.status,
         },
     }, (err, updated) => {
        
@@ -246,8 +246,6 @@ exports.getChatHistory = (req, res) => {
     if(req.params.memberId){
 
         // let arr2 = [];
-
-       
         // ChatHistory.find( {$or: [ { to: req.params.memberId }, { from: req.params.memberId } ] }, (err, result) => 
         // {
 
@@ -310,11 +308,6 @@ exports.getChatHistory = (req, res) => {
             }
               return sendSuccessResponse(res, users, 'Your chat history');
         });
-
-
-
-        
-
     }else
     {
       return sendErrorResponse(res, {}, 'MemberId is required');
