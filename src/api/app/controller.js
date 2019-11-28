@@ -12,7 +12,7 @@ const likedHistory = mongoose.model('LikedUsersHistory');
 const ObjectId = require('mongodb').ObjectId;
 
 
-  exports.logChatHistory = (req, res) => {
+exports.logChatHistory = (req, res) => {
     let required = [
         {name: 'from', type: 'string'},
         {name: 'to', type: 'string'},
@@ -22,7 +22,7 @@ const ObjectId = require('mongodb').ObjectId;
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        ChatHistory.findOne({ $or: [ {from: body.from,to: body.to }, { from: body.to,to: body.from }] },(err, result) => 
+        ChatHistory.findOne({ $or: [{from: body.from,to: body.to },{ from: body.to,to: body.from }] },(err, result) => 
         {
             if (err)
             {
@@ -55,7 +55,7 @@ const ObjectId = require('mongodb').ObjectId;
     }
 }
 
-  exports.blockUser = (req, res) =>{
+exports.blockUser = (req, res) =>{
     let required = [
         {name: 'blocker', type: 'string'},
         {name: 'blocked', type: 'string'},
@@ -297,15 +297,14 @@ exports.getChatHistory = (req, res) => {
             {$unwind: "$to"},
 
             {$lookup: {from: 'users', foreignField: 'memberId', localField: 'from', as: 'from'}},
-            {$unwind: "$from"},
-
-            {$lookup: {from: 'blockedusershistories', foreignField: 'blocked', localField: 'memberId', as: 'blockedStatus'}},
+            {$unwind: "$from"},  
 
         ], (err, users) => {
               if (err) {  
                 console.log(err);  
                 return sendErrorResponse(res, {}, 'Something went wrong');
             }
+          
               return sendSuccessResponse(res, users, 'Your chat history');
         });
     }else
@@ -335,6 +334,58 @@ exports.getBlockedHistory = (req, res) =>{
     }
 }
 
+
+exports.checkBlockedStatus = (req, res) =>
+{
+    let required = [
+        {name: 'memberId1', type: 'string'},
+        {name: 'memberId2', type: 'string'},
+        
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        BlockedUser.findOne({ $or: [
+
+                                   {blocker: body.memberId1, blocked: body.memberId2 },
+                                   {blocker: body.memberId2, blocked: body.memberId1 }
+                                   
+                                   ] 
+                            
+                                },(err, result) => 
+        {
+            if (err)
+            {
+                console.log(err);
+                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+            }
+            if (result){
+
+                return sendSuccessResponse(res, result, 'Looks like they have history');
+
+            }else{
+                
+                
+               return sendSuccessResponse(res, {}, 'They havent blocked themselves');
+               
+            }
+        });
+
+
+
+    }else{
+
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+
+
+}
+
+
 exports.quickmatch = (req, res)  => {
    
     if (req.params.n && !isNaN(req.params.n)) {
@@ -342,6 +393,12 @@ exports.quickmatch = (req, res)  => {
         let number  =  parseInt(req.params.n);
        
         Users.aggregate([ 
+            {$match: {
+                'email': {
+                    $ne: req.payload.email ,
+                }
+            }
+            },
             {$sample: {size: number} },
         ], (err, match) => {
             console.log(err);
@@ -372,8 +429,6 @@ exports.viewedYou = (req, res)  => {
         });  
 
 }
-
-
 
 exports.nearbyUsers = (req, res) => {
     let required = [
@@ -448,9 +503,6 @@ exports.popular = (req, res)  => {
     
     
 }
-
-
-
 
 function tripFilter (query) {
 

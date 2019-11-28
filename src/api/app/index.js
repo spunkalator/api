@@ -22,5 +22,6 @@ router.post('/logChatHistory', controller.logChatHistory);
 router.get('/getChatHistory/:memberId', controller.getChatHistory);
 
 router.get('/getBlockedHistory/:memberId', controller.getBlockedHistory);
+router.post ('/checkBlockedStatus', controller.checkBlockedStatus)
 
 module.exports = router;
