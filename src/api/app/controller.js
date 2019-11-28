@@ -370,7 +370,7 @@ exports.checkBlockedStatus = (req, res) =>
             }else{
                 
                 
-               return sendSuccessResponse(res, {}, 'They havent blocked themselves');
+               return sendSuccessResponse(res, result, 'They havent blocked themselves');
                
             }
         });
