@@ -363,14 +363,16 @@ exports.checkBlockedStatus = (req, res) =>
                 console.log(err);
                 return sendErrorResponse(res, {}, 'Something went wrong, please try again');
             }
-            if (result){
+            if (result && result != null){
 
                 return sendSuccessResponse(res, result, 'Looks like they have history');
 
             }else{
                 
-                
-               return sendSuccessResponse(res, result, 'They havent blocked themselves');
+                data = {
+                    "status": "unblocked",
+                }
+               return sendSuccessResponse(res, data, 'They havent blocked themselves');
                
             }
         });
