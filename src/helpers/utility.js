@@ -1,6 +1,9 @@
 
 const request = require('request');
-                                                                                         
+const nodemailer = require('nodemailer');
+
+
+
 exports.sendJsonResponse = function (res, status, content) {
     res.status(status).json(content);
 };
@@ -178,9 +181,9 @@ exports.trimCollection = (data) => {
     return data;
 };
 
-exports.generateId = () => {
+exports.generateId = (l) => {
 
-    const length = 15;
+    const length = l;
     let timestamp = Date.now().toString();
 
     let _getRandomInt = function( min, max ) {
@@ -197,3 +200,35 @@ exports.generateId = () => {
 
     return id;
 };
+
+exports.sendEmail = (email, code, subject) =>{
+
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'zingamapp@gmail.com',
+            pass: 'Middlesex10@'
+        }
+        });
+
+     
+        var mailOptions = {
+            from: 'ZingAm Support',
+            to: email,
+            subject: subject,
+            text: 'Please use this code to login to your ZingAm account: ' + code,
+        };
+
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+
+                console.log(error, "errr");
+                return false;
+            }
+           
+                console.log(info);
+                return true
+            
+        });
+
+}

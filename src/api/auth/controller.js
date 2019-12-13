@@ -1,5 +1,5 @@
 
-const {validParam, sendErrorResponse, sendSuccessResponse, generateId, trimCollection} = require('../../helpers/utility');
+const {validParam, sendErrorResponse, sendEmail, sendSuccessResponse, generateId, trimCollection} = require('../../helpers/utility');
 const mongoose = require('mongoose');
 const Users = mongoose.model('User');
 const ObjectId = require('mongodb').ObjectId;
@@ -97,7 +97,7 @@ exports.authWithToken = (req, res, next) => {
                     nUser.dob       = ""
                   
                     nUser.token     = body.token;
-                    nUser.memberId  = generateId();
+                    nUser.memberId  = generateId(15);
                     nUser.defaultImage = "";
                     nUser.subscriptionStatus = "invalid"
 
@@ -165,7 +165,7 @@ exports.register = (req, res, next) => {
                     nUser.nickname  = body.nickname;
                     nUser.email     = body.email;
                     nUser.password  = hash;
-                    nUser.memberId  = generateId();
+                    nUser.memberId  = generateId(15);
                     nUser.defaultImage = "";
                     nUser.subscriptionStatus = "invalid";
                     nUser.dob                = body.dob;
@@ -197,74 +197,6 @@ exports.register = (req, res, next) => {
 }
 
 
-exports.resetPassword = (req, res) =>
-{
-    if (req.params.code) {
-
-        let required = [
-            {name: 'password', type: 'string'},
-            {name: 'cpass', type: 'string'},
-        ];
-        
-        req.body = trimCollection(req.body);
-        const body = req.body;
-        console.log(req.body);
-
-        let hasRequired = validParam(req.body, required);
-        if (hasRequired.success) {
-
-            if(body.password !== body.cpass){
-
-                res.render('resetPassword', { error: 'Passwords do not match', code : req.params.code });
-
-            }else{
-
-                Users.findOne({forgotPassword: req.params.code},(err, result) => 
-                {
-                  
-                    if (err)
-                    {
-                        console.log(err);
-                        res.render('resetPassword', { error: 'Something went wrong, please try again', code : req.params.code });
-                    }
-                    if(result == null ){
-                        res.render('resetPassword', { error: 'Invalid code', code : req.params.code  });
-                    }else{
-                     
-
-                        let hash        = bcrypt.hashSync(body.password, 10);
-                        Users.updateOne(
-                            { email: result.email }, {
-                            $set: {
-                                password:hash,
-                                forgotPassword: ""
-                            },
-                        }, (err, updated) => {
-                        
-                            if (err) {
-                                console.log(err);
-                                res.render('resetPassword', { error: 'Something went wrong, Please try again', code : req.params.code  });
-                            }
-                            if (updated && updated.nModified) {
-                                res.render('resetPassword', { error: 'Password has been changed, You can login now', code : req.params.code  });
-                            }
-                        });
-                }
-            });
-
-            }
-        }else{
-
-            res.render('resetPassword', { error: 'All Fields are required', code : req.params.code });
-        }
-
- }else{
-    return sendErrorResponse(res, {}, 'No reset code found');
- }
-
-
-}
-
 exports.forgotPassword = (req, res) =>
 {
     let required = [
@@ -288,30 +220,9 @@ exports.forgotPassword = (req, res) =>
             if (result) {
                 if(result.email == body.email ){
 
-
-                   
-
-                    let transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                            user: 'awele.osuka@gmail.com',
-                            pass: 'kawelouz'
-                        }
-                    });
-
-                    let fullUrl = 'https://zingam-api.herokuapp.com/auth/resetPassword/';
-                    let code =  generateId();
-                    let url  = fullUrl + code;
-
-                    console.log(url, "urll");
-
-                    let mailOptions = {
-                        from: 'ZingAm',
-                        to: req.body.email,
-                        subject: 'Reset your ZingAm password',
-                        text: 'Please use this link to reset your password: ' + url,
-                    };
-
+                  
+                    let code =  generateId(6);
+                    
                     Users.updateOne(
                         { email: body.email}, {
                         $set: {
@@ -323,20 +234,12 @@ exports.forgotPassword = (req, res) =>
                             console.log(err);
                             return sendErrorResponse(res, {}, 'Something went wrong, please try again');
                         }
+                        sendEmail(body.email, code, 'ZingaAm Forgot Pin');
                         if (updated && updated.nModified) {
-                            
-                            transporter.sendMail(mailOptions, function(error, info){
-                                if (error) {
-                                    console.log(error);
-                                
-                                    return sendErrorResponse(res, {}, 'Something went wrong, please try again');
-                                } else {
-                    
-                                return sendSuccessResponse(res, {}, 'Please check your email, a reset link has been sent');
-                    
-                                }
-                            });
-                            
+
+                            return sendSuccessResponse(res, {}, 'A code has been sent to your email');
+                        } else {
+                            return sendSuccessResponse(res, {}, 'A code has been sent to your email');
                         }
                     });
                 }
@@ -350,5 +253,75 @@ exports.forgotPassword = (req, res) =>
         return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
     }
 
+
+}
+
+exports.verifyForgotPasswordCode = (req, res) =>
+{
+    let required = [
+        {name: 'email', type: 'string'},
+        {name: 'code', type: 'string'},
+    ];
+
+     req.body = trimCollection(req.body);
+     const body = req.body;
+     console.log(req.body, "body");
+
+     let hasRequired = validParam(req.body, required);
+     if (hasRequired.success) {
+
+        Users.findOne({email: body.email, forgotPassword: body.code}, (err, result) => 
+        {
+                if (err)
+                {
+                    console.log(err);
+                    return sendErroResponse(res, {}, 'Something went wrong, Please try again');
+                }
+                if (result != null) {
+
+                     return sendSuccessResponse(res, {}, 'Code is valid');
+   
+                }else{
+                    return sendErrorResponse(res, {}, 'Code is invalid');
+                }
+        });
+     }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+     }
+}
+
+exports.setNewPassword = (req, res) =>
+{
+    let required = [
+        {name: 'password', type: 'string'},
+        {name: 'email', type: 'string'}
+    ];
+
+     req.body = trimCollection(req.body);
+     const body = req.body;
+     console.log(req.body, "body");
+
+     let hasRequired = validParam(req.body, required);
+     if (hasRequired.success) {
+       
+        Users.updateOne({email: body.email}, {
+            $set: {
+                forgotPassword: body.password,
+            },
+        }, (err, updated) => {
+            if (err) {
+                console.log(err);
+                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
+            }
+            if (updated && updated.nModified) {
+                return sendSuccessResponse(res, {}, 'Password Changed Successfully, you may login');
+            } else {
+                return sendSuccessResponse(res, {}, 'Password Changed Successfully, you may login');
+            }
+        });
+    
+  }else{
+    return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+  } 
 
 }
