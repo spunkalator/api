@@ -452,21 +452,21 @@ exports.nearbyUsers = (req, res) => {
             return sendSuccessResponse(res, {popular}, 'Nearby users');   
         }); 
 
-        Users.find( 
-            {
-                'lastLocation' :
-                {
-                  $near: {
-                    $geometry: {
-                         type: "Point" ,
-                         coordinates: [ body.lastLocation]
-                    },
-                    $maxDistance: 100
-                }
-            }
-            },function(err,result){
-                return sendSuccessResponse(res, { users: result}, 'Users near you');
-            })
+        // Users.find( 
+        //     {
+        //         'lastLocation' :
+        //         {
+        //           $near: {
+        //             $geometry: {
+        //                  type: "Point" ,
+        //                  coordinates: [body.location]
+        //             },
+        //             $maxDistance: 3000
+        //         }
+        //     }
+        //     },function(err,result){
+        //         return sendSuccessResponse(res, { users: result}, 'Users near you');
+        //     })
      
     }else
     {
