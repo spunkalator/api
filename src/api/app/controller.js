@@ -482,7 +482,9 @@ exports.popular = (req, res)  => {
         {$match: {
             'email': {
                 $ne: req.payload.email ,
-            }
+            
+            },
+            'subscriptionStatus' : 'valid'
         }
         },
         {$sample: {size: 10} },
