@@ -155,6 +155,7 @@ exports.likes = (req, res)  => {
 
         Users.findOne( {nickname: req.payload.nickname}, (err, result2) => 
         {
+            console.log(result2, "result2");
                
         number  = result.length;
         return sendSuccessResponse(res, {count: number, subscriptionStatus: result2.subscriptionStatus, result}, 'details');
