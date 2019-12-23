@@ -155,6 +155,7 @@ exports.likes = (req, res)  => {
 
         Users.findOne( {nickname: req.payload.nickname}, (err, result2) => 
         {
+            console.log(req.payload.nickname, "nickname result2");
             console.log(result2, "result2");
                
         number  = result.length;
