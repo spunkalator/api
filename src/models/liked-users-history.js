@@ -9,6 +9,7 @@ let LikedUsersHistorySchema = new Schema({
     
     liker: String,      
     liked: String,
+    status: String,
     created: {type: Date, require:true, default: Date.now}
 
 });

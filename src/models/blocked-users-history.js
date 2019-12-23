@@ -9,6 +9,7 @@ let BlockedUsersHistorySchema = new Schema({
     
     blocker: String,      
     blocked: String,
+    
 
     status: String,
 

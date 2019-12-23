@@ -16,39 +16,31 @@ exports.logChatHistory = (req, res) => {
     let required = [
         {name: 'from', type: 'string'},
         {name: 'to', type: 'string'},
+        {name: 'lastMessage', type: 'string'},
+
     ];
     req.body = trimCollection(req.body);
     const body = req.body;
     let hasRequired = validParam(req.body, required);
     if (hasRequired.success) {
 
-        ChatHistory.findOne({ $or: [{from: body.from,to: body.to },{ from: body.to,to: body.from }] },(err, result) => 
-        {
-            if (err)
-            {
-                console.log(err);
-                return sendErrorResponse(res, {}, 'Something went wrong, please try again');
-            }
-            if (result){
 
-                return sendSuccessResponse(res, {}, 'History already logged');
+        ChatHistory.updateOne(
+            {$or: [{from: body.from,to: body.to },{ from: body.to,to: body.from }] },
 
-            }else{
-                
-                let nHistory      = new ChatHistory();
-                nHistory.from  = body.from;
-                nHistory.to     = body.to;
-               
-                nHistory.save((err) => {
-                    console.log(err);
-                    if (err) {
+            { $set: { from: body.from, to: body.to, lastMessage: body.lastMessage} },
+            { upsert: true },
+            (err, updated) => {
+
+                if(err)
+                    {
                         console.log(err);
-                        return sendErrorResponse(res, {}, 'Something went wrong');
+                        return sendErrorResponse(res, {}, 'Something went wrong, please try again');
                     }
-                    return sendSuccessResponse(res, {}, 'History logged');
-                });
-            }
+                    return sendSuccessResponse(res, {}, `History has been logged`);
+
         });
+
     }else
     {
         return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
@@ -116,6 +108,7 @@ exports.likeUser = (req, res) => {
     let required = [
         {name: 'liker', type: 'string'},
         {name: 'liked', type: 'string'},
+        {name: 'status', type: 'string'}
        
     ];
     
@@ -127,7 +120,7 @@ exports.likeUser = (req, res) => {
 
         likedHistory.updateOne(
             {liker: body.liker, liked: body.liked},
-            { $set: { liker: body.liker, liked: body.liked} },
+            { $set: { liker: body.liker, liked: body.liked, status: body.status} },
             { upsert: true },
             (err, updated) => {
 
@@ -136,7 +129,7 @@ exports.likeUser = (req, res) => {
                         console.log(err);
                         return sendErrorResponse(res, {}, 'Something went wrong, please try again');
                     }
-                    return sendSuccessResponse(res, {}, 'User has been Liked');
+                    return sendSuccessResponse(res, {}, `User has been ${body.status}`);
 
         });
 
@@ -459,21 +452,21 @@ exports.nearbyUsers = (req, res) => {
             return sendSuccessResponse(res, {popular}, 'Nearby users');   
         }); 
 
-        // Users.find( 
-        //     {
-        //         'lastLocation' :
-        //         {
-        //           $near: {
-        //             $geometry: {
-        //                  type: "Point" ,
-        //                  coordinates: [ body.lastLocation]
-        //             },
-        //             $maxDistance: 100
-        //         }
-        //     }
-        //     },function(err,result){
-        //         return sendSuccessResponse(res, { users: result}, 'Users near you');
-        //     })
+        Users.find( 
+            {
+                'lastLocation' :
+                {
+                  $near: {
+                    $geometry: {
+                         type: "Point" ,
+                         coordinates: [ body.lastLocation]
+                    },
+                    $maxDistance: 100
+                }
+            }
+            },function(err,result){
+                return sendSuccessResponse(res, { users: result}, 'Users near you');
+            })
      
     }else
     {
