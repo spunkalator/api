@@ -16,7 +16,7 @@ exports.logChatHistory = (req, res) => {
     let required = [
         {name: 'from', type: 'string'},
         {name: 'to', type: 'string'},
-        {name: 'lastMessage', type: 'string'},
+        //{name: 'lastMessage', type: 'string'},
 
     ];
     req.body = trimCollection(req.body);
