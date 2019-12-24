@@ -108,7 +108,7 @@ exports.likeUser = (req, res) => {
     let required = [
         {name: 'liker', type: 'string'},
         {name: 'liked', type: 'string'},
-        {name: 'status', type: 'string'}
+        //{name: 'status', type: 'string'}
        
     ];
     
