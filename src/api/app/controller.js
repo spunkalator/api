@@ -138,6 +138,35 @@ exports.likeUser = (req, res) => {
     }
 }
 
+
+exports.checkIfLiked = (req, res) => {
+    
+    let required = [
+        {name: 'liker', type: 'string'},
+        {name: 'liked', type: 'string'},
+       
+    ];
+    
+    req.body = trimCollection(req.body);
+    const body = req.body;
+    
+    let hasRequired = validParam(req.body, required);
+    if (hasRequired.success) {
+
+        likedHistory.findOne(  
+            {$or: [{from: body.from,to: body.to },{ from: body.to,to: body.from }] },
+
+            (err, result) => 
+        {
+           
+        return sendSuccessResponse(res, result, 'details');
+
+        });
+    }else{
+        return sendErrorResponse(res, {required: hasRequired.message}, 'Missing required fields');
+    }
+}
+
 exports.likes = (req, res)  => {
 
     likedHistory.aggregate([
@@ -293,6 +322,10 @@ exports.getChatHistory = (req, res) => {
 
             {$lookup: {from: 'users', foreignField: 'memberId', localField: 'from', as: 'from'}},
             {$unwind: "$from"},  
+
+            { $sort : { _id : -1} }
+
+            
 
         ], (err, users) => {
               if (err) {  

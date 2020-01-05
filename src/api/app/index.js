@@ -10,6 +10,8 @@ router.get('/popular', controller.popular);
 router.post('/nearby', controller.nearbyUsers)
 router.post('/like/:username', controller.likeUser);
 
+router.post('/checkIfLiked/', controller.checkIfLiked);
+
 router.post('/viewedYou', controller.viewedYou);
 router.post('/likes/:memberId', controller.likes);
 
